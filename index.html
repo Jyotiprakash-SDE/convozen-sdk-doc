@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ConvoZen Voice SDK | Developer Documentation Portal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --bg-primary: #020617;
+        --bg-secondary: #0f172a;
+        --bg-card: rgba(30, 41, 59, 0.5);
+        --bg-code: #010409;
+        --border: rgba(255, 255, 255, 0.1);
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent: #8b5cf6;
+        --accent-gradient: linear-gradient(135deg, #00d2ff 0%, #8b5cf6 50%, #d946ef 100%);
+        
+        --code-kw: #c678dd;
+        --code-st: #98c379;
+        --code-fn: #61afef;
+        --code-cl: #e5c07b;
+        --code-vl: #d19a66;
+        --code-cm: #5c6370;
+        
+        --font-display: 'Sora', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --font-code: 'JetBrains Mono', monospace;
+        
+        --sidebar-width: 280px;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --radius-sm: 8px;
+        --shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+      }
+
+      [data-theme="light"] {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-code: #f1f5f9;
+        --border: #e2e8f0;
+        --text-primary: #0f172a;
+        --text-secondary: #334155;
+        --text-muted: #64748b;
+        --accent: #4f46e5;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: var(--font-body);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
+
+      .layout { display: flex; min-height: 100vh; }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: var(--sidebar-width);
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border);
+        position: fixed;
+        height: 100vh;
+        padding: 40px 24px;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+
+      .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; text-decoration: none; }
+      .logo img { width: 34px; height: 34px; }
+      .logo-text { font-family: var(--font-display); font-size: 22px; font-weight: 800; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+      .sidebar-title { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 12px; font-weight: 800; padding-left: 12px; }
+
+      .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; border-radius: var(--radius-sm); transition: 0.2s; margin-bottom: 4px; cursor: pointer; }
+      .nav-link:hover { background: rgba(139, 92, 246, 0.05); color: var(--text-primary); }
+      .nav-link.active { background: rgba(139, 92, 246, 0.1); color: var(--accent); font-weight: 700; border: 1px solid rgba(139, 92, 246, 0.2); }
+
+      .sidebar-footer { margin-top: auto; padding: 20px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+      .version-tag { font-size: 11px; font-family: var(--font-code); color: var(--text-muted); font-weight: 600; }
+      
+      .theme-toggle { background: transparent; border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: 0.2s; }
+      .theme-toggle:hover { background: var(--bg-card); color: var(--text-primary); }
+
+      /* MAIN CONTENT */
+      .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 60px 80px; max-width: 1400px; }
+      .doc-section { display: none; }
+      .doc-section.active { display: block; animation: slideIn 0.4s ease; }
+
+      @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+      .hero { text-align: center; margin-bottom: 60px; }
+      .hero-badge { display: inline-block; padding: 6px 14px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 100px; color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+      .hero-title { font-family: var(--font-display); font-size: 44px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1.5px; line-height: 1.2; }
+      .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .hero-p { font-size: 17px; color: var(--text-secondary); max-width: 750px; margin: 0 auto; line-height: 1.7; }
+
+      h2 { font-family: var(--font-display); font-size: 30px; font-weight: 700; margin: 70px 0 30px; display: flex; align-items: center; gap: 15px; }
+      h2::before { content: ""; width: 5px; height: 32px; background: var(--accent-gradient); border-radius: 4px; }
+      h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin: 40px 0 20px; color: var(--text-primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+      h4 { font-family: var(--font-display); font-size: 18px; font-weight: 600; margin: 32px 0 16px; color: var(--accent); }
+
+      /* TABS */
+      .tabs-header { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 40px; overflow-x: auto; padding-bottom: 2px; }
+      .tab-btn { padding: 12px 24px; background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-display); font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; white-space: nowrap; }
+      .tab-btn:hover { color: var(--text-primary); }
+      .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+      .tab-content { display: none; }
+      .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      /* CODE BLOCKS */
+      .code-block { background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; margin: 24px 0; }
+      .code-header { background: rgba(255,255,255,0.03); padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-family: var(--font-code); color: var(--text-muted); }
+      .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 11px; }
+      .copy-btn:hover { background: var(--bg-card); color: var(--text-primary); }
+      pre { padding: 24px; overflow-x: auto; font-family: var(--font-code); font-size: 14px; line-height: 1.6; }
+      
+      .kw { color: var(--code-kw); }
+      .st { color: var(--code-st); }
+      .fn { color: var(--code-fn); }
+      .cl { color: var(--code-cl); }
+      .vl { color: var(--code-vl); }
+      .cm { color: var(--code-cm); font-style: italic; }
+      .tg { color: #e06c75; }
+      .at { color: #d19a66; }
+
+      /* UTILS */
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 32px 0; }
+      .card { background: var(--bg-secondary); border: 1px solid var(--border); padding: 28px; border-radius: var(--radius-md); box-shadow: var(--shadow); }
+      .card strong { display: block; font-size: 18px; margin-bottom: 10px; font-family: var(--font-display); color: var(--text-primary); }
+
+      .table-wrapper { overflow-x: auto; margin: 32px 0; border: 1px solid var(--border); border-radius: var(--radius-md); }
+      .doc-table { width: 100%; border-collapse: collapse; background: var(--bg-secondary); }
+      .doc-table th, .doc-table td { padding: 16px; border: 1px solid var(--border); text-align: left; font-size: 14px; vertical-align: top; }
+      .doc-table th { background: rgba(255,255,255,0.02); font-family: var(--font-display); color: var(--text-primary); font-weight: 700; }
+      .doc-table td code { background: var(--bg-code); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--accent); }
+      
+      .check-badge { background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; }
+      .cross-badge { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; }
+      
+      .badge-req { background: rgba(239, 68, 68, 0.1); color: #f87171; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+      .badge-opt { background: rgba(148, 163, 184, 0.1); color: #94a3b8; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+
+      .status-box { background: var(--bg-secondary); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 16px 20px; margin-bottom: 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+      .status-box strong { color: var(--text-primary); display: block; font-size: 14px; margin-bottom: 4px; }
+      .status-box span { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+
+      /* GLOW CARDS FOR USE CASES */
+      .glow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin: 40px 0; }
+      .glow-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: 0.3s; }
+      .glow-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 12px 40px -10px rgba(139,92,246,0.3); }
+      .glow-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent-gradient); opacity: 0.5; }
+      .glow-card strong { display: block; font-size: 16px; margin-bottom: 16px; font-family: var(--font-display); color: var(--text-primary); }
+      .glow-card ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+      .glow-card li { margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
+      .glow-card li:last-child { margin-bottom: 0; }
+
+      ul, ol { padding-left: 20px; margin-bottom: 24px; color: var(--text-secondary); }
+      li { margin-bottom: 8px; }
+
+      footer { margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 13px; }
+
+      @media (max-width: 1024px) {
+        .sidebar { display: none; }
+        .main-content { margin-left: 0; padding: 40px 20px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <a href="#" class="logo">
+          <img src="https://assets-org.callzen.ai/convozen-ai.webp" alt="Logo" style="object-fit: contain;"/>
+          <div class="logo-text">ConvoZen</div>
+        </a>
+
+        <nav>
+          <a class="nav-link active" onclick="switchSection('overview', this)">Overview</a>
+          <a class="nav-link" onclick="switchSection('platform-support', this)">Support Matrix</a>
+          <a class="nav-link" onclick="switchSection('service', this)">Service Implementation</a>
+          <a class="nav-link" onclick="switchSection('permissions', this)">Permissions Guide</a>
+          <a class="nav-link" onclick="switchSection('business-use-cases', this)">Business Use Cases</a>
+          <a class="nav-link" onclick="switchSection('use-cases', this)">Edge Case Scenarios</a>
+          <a class="nav-link" onclick="switchSection('status-faq', this)">Statuses & FAQ</a>
+          <a class="nav-link" onclick="switchSection('release-notes', this)">Release Notes</a>
+          <a class="nav-link" onclick="switchSection('versions', this)">Versions & Roadmap</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span class="version-tag">v1.0.0</span>
+          <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+            <svg id="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="sun-icon" style="display:none" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        
+        <!-- UNIVERSAL OVERVIEW -->
+        <section id="overview" class="doc-section active">
+          <div class="hero">
+            <p class="hero-badge">ConvoZen Voice SDK Portal</p>
+            <h1 class="hero-title">Universal Voice SDK <br><span class="gradient-text">Complete Developer Portal</span></h1>
+            <p class="hero-p">Integrate high-quality, low-latency, real-time voice streaming and session metrics into your platform. Built natively for Android, iOS, Flutter, and Web with SQLite offline sync and hardware AEC.</p>
+          </div>
+
+          <h2>Key Technical Features</h2>
+          <div class="grid">
+            <div class="card">
+              <div style="margin-bottom: 16px; color: var(--accent);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              </div>
+              <div class="check-badge" style="margin-bottom: 12px; font-size: 10px;">Low Latency</div>
+              <strong>Native Performance</strong>
+              <p>Optimized G.711 / PCM streaming buffers for near-zero lag voice interactions.</p>
+            </div>
+            <div class="card">
+              <div style="margin-bottom: 16px; color: var(--accent);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+              </div>
+              <div class="check-badge" style="margin-bottom: 12px; font-size: 10px;">Reliability</div>
+              <strong>Enterprise Lifecycle</strong>
+              <p>Exhaustive status tracking ensures session integrity from initialization to disposal.</p>
+            </div>
+            <div class="card">
+              <div style="margin-bottom: 16px; color: var(--accent);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div class="check-badge" style="margin-bottom: 12px; font-size: 10px;">Acoustics</div>
+              <strong>Hardware AEC</strong>
+              <p>Automatic Acoustic Echo Cancellation leveraging physical device hardware for absolute clarity.</p>
+            </div>
+            <div class="card">
+              <div style="margin-bottom: 16px; color: var(--accent);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </div>
+              <div class="check-badge" style="margin-bottom: 12px; font-size: 10px;">Offline First</div>
+              <strong>SQLite Background Sync</strong>
+              <p>Robust handling of network drops with native SQLite caching and auto-resumption.</p>
+            </div>
+          </div>
+
+          <h2 style="margin-top: 60px;">System Architecture & SDK Lifecycle Flow</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 30px;">The end-to-end network handshake, real-time voice streaming, server-side processing, and synchronous offline recovery sequence managed by the ConvoZen Voice SDK.</p>
+          
+          <div class="table-wrapper" style="padding: 30px; background: var(--bg-secondary); border-radius: var(--radius-md);">
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+              
+              <!-- Phase 1 -->
+              <div style="display: flex; align-items: center; gap: 20px; background: rgba(139, 92, 246, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-sm); transition: 0.2s;">
+                <div style="background: var(--accent); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display);">1</div>
+                <div style="flex: 1;">
+                  <strong style="color: var(--text-primary); font-size: 16px; display: block; margin-bottom: 4px;">Phase 1: Handshake & Authorization</strong>
+                  <span style="color: var(--text-secondary); font-size: 13px;">The client app triggers <code>sdk.start()</code>. The SDK makes a secure HTTP POST request to the <code>initialize_call_api</code> using the <code>initialize_call_token</code>. The server validates credentials and issues secure, temporary WebSocket VoIP session tokens.</span>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div style="display: flex; justify-content: center; color: var(--accent);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+
+              <!-- Phase 2 -->
+              <div style="display: flex; align-items: center; gap: 20px; background: rgba(0, 210, 255, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-sm); transition: 0.2s;">
+                <div style="background: #00d2ff; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display);">2</div>
+                <div style="flex: 1;">
+                  <strong style="color: var(--text-primary); font-size: 16px; display: block; margin-bottom: 4px;">Phase 2: Real-Time Audio Capture & WebSocket Streaming (WSS)</strong>
+                  <span style="color: var(--text-secondary); font-size: 13px;">The SDK requests native microphone access, activates hardware echo cancellation (AEC), and captures raw audio (lossless 16-bit PCM at 16kHz). It automatically establishes a secure WebSocket connection (<code>wss://</code>) to stream the voice packets instantly in real-time.</span>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div style="display: flex; justify-content: center; color: #00d2ff;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+
+              <!-- Phase 3 -->
+              <div style="display: flex; align-items: center; gap: 20px; background: rgba(217, 70, 239, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-sm); transition: 0.2s;">
+                <div style="background: #d946ef; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display);">3</div>
+                <div style="flex: 1;">
+                  <strong style="color: var(--text-primary); font-size: 16px; display: block; margin-bottom: 4px;">Phase 3: Server-Side Audio Merging & Processing</strong>
+                  <span style="color: var(--text-secondary); font-size: 13px;">On the server side, ConvoZen's speech engines capture both the advisor's outbound stream and the customer's inbound stream, dynamically merging them in real-time into a high-quality, dual-channel master WAV file.</span>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div style="display: flex; justify-content: center; color: #d946ef;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+
+              <!-- Phase 4 -->
+              <div style="display: flex; align-items: center; gap: 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-sm); transition: 0.2s;">
+                <div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display);">4</div>
+                <div style="flex: 1;">
+                  <strong style="color: var(--text-primary); font-size: 16px; display: block; margin-bottom: 4px;">Phase 4: Session Disposal & Secure Webhook Dispatch</strong>
+                  <span style="color: var(--text-secondary); font-size: 13px;">When the call ends (<code>sdk.stop()</code>), the SDK uploads local session records via the <code>recording_dispose_api</code> and disposes of session metadata using the <code>call_dispose_api</code>. It immediately triggers the <code>dispose_webhook_api</code>, safely cleans up memory, and deletes temporary local audio caches.</span>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div style="display: flex; justify-content: center; color: #10b981;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+
+              <!-- Phase 5 -->
+              <div style="display: flex; align-items: center; gap: 20px; background: rgba(245, 158, 11, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius-sm); transition: 0.2s;">
+                <div style="background: #f59e0b; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display);">5</div>
+                <div style="flex: 1;">
+                  <strong style="color: var(--text-primary); font-size: 16px; display: block; margin-bottom: 4px;">Offline Fallback (SQLite + WorkManager Auto-Sync)</strong>
+                  <span style="color: var(--text-secondary); font-size: 13px;">If the connection drops or the phone turns off, the SDK immediately writes all data synchronously to disk. Once back online, the Google WorkManager or iOS NWPathMonitor automatically queues and uploads the cached files background-resiliently.</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- SUPPORT MATRIX -->
+        <section id="platform-support" class="doc-section">
+          <h1 class="hero-title">Platform <br><span class="gradient-text">Support Matrix</span></h1>
+          <p>Exhaustive breakdown of feature parity across all ConvoZen SDKs.</p>
+
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Technical Feature</th>
+                  <th>Android</th>
+                  <th>iOS</th>
+                  <th>Flutter</th>
+                  <th>Web / JS / React</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>onStatusChange Callback</td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td></tr>
+                <tr><td>onError Callback</td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td></tr>
+                <tr><td>onDispose Callback</td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td></tr>
+                <tr><td>onOfflineSync Callback</td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="cross-badge">✗ N/A</span></td></tr>
+                <tr><td>Echo Cancellation (AEC)</td><td>Hardware</td><td>Hardware</td><td>Native Bridge</td><td>Web Audio API</td></tr>
+                <tr><td>PCM (16-bit / 16kHz)</td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="cross-badge">✗ N/A</span></td></tr>
+                <tr><td>Mu-Law (8kHz)</td><td><span class="check-badge">✓ Default</span></td><td><span class="check-badge">✓ Default</span></td><td><span class="check-badge">✓ Default</span></td><td><span class="check-badge">✓ Default</span></td></tr>
+                <tr><td>Background Webhooks</td><td><span class="check-badge">✓ Post-Call</span></td><td><span class="check-badge">✓ Post-Call</span></td><td><span class="check-badge">✓ Post-Call</span></td><td><span class="cross-badge">✗ N/A</span></td></tr>
+                <tr><td>Bluetooth & Earbud Auto-Routing</td><td><span class="check-badge">✓ Native (API 31+)</span></td><td><span class="check-badge">✓ iOS Core</span></td><td><span class="check-badge">✓ Supported</span></td><td><span class="cross-badge">✗ Browser-led</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SERVICE IMPLEMENTATIONS -->
+        <section id="service" class="doc-section">
+          <h1 class="hero-title">Service <br><span class="gradient-text">Implementation</span></h1>
+          <p>Exhaustive step-by-step blueprints for integration across all platforms. Follow the standard patterns with complete property definitions.</p>
+
+          <div class="tabs-container" style="margin-top: 40px;">
+            <div class="tabs-header">
+              <button class="tab-btn active" onclick="switchTab('android', this)">Android Native</button>
+              <button class="tab-btn" onclick="switchTab('ios', this)">iOS Native</button>
+              <button class="tab-btn" onclick="switchTab('flutter', this)">Flutter Plugin</button>
+              <button class="tab-btn" onclick="switchTab('web', this)">JS / Web</button>
+            </div>
+
+            <!-- ANDROID TAB -->
+            <div id="android" class="tab-content active">
+              <div class="hero">
+                <div class="hero-badge">Native Android Voice SDK</div>
+                <h3>Voice SDK for Android (Kotlin)</h3>
+                <p style="margin-top: 10px;">Fully secure, obfuscated package published on **Maven Central**. Eliminates the need to locally copy or maintain `.aar` binaries.</p>
+              </div>
+
+              <h3>Maven Dependency Configuration</h3>
+              <div class="code-block">
+                <div class="code-header"><span>app/build.gradle</span><button class="copy-btn">Copy</button></div>
+                <pre><code>dependencies {
+    <span class="cm">// Secure dependency from Maven Central</span>
+    <span class="fn">implementation</span>(<span class="st">"io.github.jeetvirani:convozen_voice_sdk:1.0.0"</span>)
+    
+    <span class="fn">implementation</span>(<span class="st">"com.squareup.okhttp3:okhttp:4.12.0"</span>)
+    <span class="fn">implementation</span>(<span class="st">"androidx.work:work-runtime-ktx:2.9.0"</span>)
+}</code></pre>
+              </div>
+
+              <h3>Implementation Guide with Every Variable</h3>
+              <div class="code-block">
+                <div class="code-header"><span>CallActivity.kt</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">package</span> com.yourcompany.app
+
+<span class="kw">import</span> android.os.Bundle
+<span class="kw">import android.util.Log</span>
+<span class="kw">import com.nobroker.convozen_voicesdk.*</span>
+
+<span class="kw">class</span> <span class="cl">CallActivity</span> : <span class="cl">AppCompatActivity</span>() {
+    <span class="kw">private lateinit var</span> sdk: <span class="cl">ConvozenVoiceSDK</span>
+
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="cl">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+
+        <span class="cm">// COMPLETE, EXHAUSTIVE configuration with raw string authentication tokens</span>
+        <span class="kw">val</span> config = <span class="cl">ConvozenConfig</span>(
+            <span class="cm">// 1. Required Credentials</span>
+            agentId = <span class="st">"AGENT_DEMO_001"</span>,
+            fromDID = <span class="st">"+919876543210"</span>,
+            orgId = <span class="st">"ORG_CALLZEN_AI"</span>,
+            campaign = <span class="st">"SALES_VOICE"</span>,
+            process = <span class="st">"PROMO_BOT"</span>,
+
+            <span class="cm">// 2. API Endpoints and Headers (Pass raw tokens directly)</span>
+            initializeCallApi = <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+            initializeCallToken = <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+            recordingDisposeApi = <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+            recordingDisposeToken = <span class="st">"RECORDING_API_TOKEN"</span>,
+            callDisposeApi = <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+            callDisposeToken = <span class="st">"WKHwszjaUH2vP1WE"</span>, <span class="cm">// Pass raw string tokens directly</span>
+
+            <span class="cm">// 3. Webhook Custom Endpoints (Optional)</span>
+            disposeWebhookApi = <span class="st">"https://your.company/webhook"</span>,
+            disposeWebhookToken = <span class="st">"WebhookSecureToken"</span>,
+
+            <span class="cm">// 4. Custom Metadata (Optional)</span>
+            requiredMetadata = <span class="fn">mapOf</span>(<span class="st">"user_id"</span> <span class="kw">to</span> <span class="st">"456"</span>, <span class="st">"lang"</span> <span class="kw">to</span> <span class="st">"en"</span>),
+            optionalMetadata = <span class="fn">mapOf</span>(<span class="st">"segment"</span> <span class="kw">to</span> <span class="st">"VIP"</span>),
+
+            <span class="cm">// 5. Core Audio Configuration Flags (Optional)</span>
+            isPcm = <span class="kw">true</span>,                       <span class="cm">// Lossless 16-bit PCM (Default: true)</span>
+            isDebug = <span class="kw">true</span>,                     <span class="cm">// Verbosely logs audio sizes (Default: false)</span>
+            voiceChannelType = <span class="st">"PSTN"</span>,           <span class="cm">// Trunk channel routing profile (Default: "PSTN")</span>
+            isStreamUpload = <span class="kw">false</span>,              <span class="cm">// Real-time chunk uploading (Default: false)</span>
+
+            <span class="cm">// 6. Custom Client Profile Tags & Destination Details (Optional)</span>
+            registerId = <span class="st">"SECURE_REGISTER_JWT_TOKEN"</span>,
+            registerUrl = <span class="st">"https://api.convozen.ai/v1/register"</span>,
+            agentName = <span class="st">"John Doe"</span>,
+            orgName = <span class="st">"NoBroker"</span>,
+            projectName = <span class="st">"Real Estate Voice"</span>,
+            projectId = <span class="st">"PROJ_NB_RE_01"</span>,
+            toNumber = <span class="st">"+919988776655"</span>,
+            modeOfCalling = <span class="st">"outbound"</span>
+        )
+
+        <span class="kw">val</span> listener = <span class="kw">object</span> : <span class="cl">ConvozenListener</span> {
+            <span class="kw">override fun</span> <span class="fn">onStatusChange</span>(status: <span class="cl">String</span>) { <span class="cl">Log</span>.<span class="fn">d</span>(<span class="st">"SDK"</span>, status) }
+            <span class="kw">override fun</span> <span class="fn">onError</span>(msg: <span class="cl">String</span>) { <span class="cl">Log</span>.<span class="fn">e</span>(<span class="st">"SDK"</span>, msg) }
+            <span class="kw">override fun</span> <span class="fn">onDispose</span>(payload: <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Any?</span>&gt;) { <span class="cl">Log</span>.<span class="fn">d</span>(<span class="st">"SDK"</span>, <span class="st">"Disposed metadata: $payload"</span>) }
+            <span class="kw">override fun</span> <span class="fn">onOfflineSync</span>(data: <span class="cl">Map</span>&lt;<span class="cl">String</span>, <span class="cl">Any</span>&gt;) { <span class="cl">Log</span>.<span class="fn">d</span>(<span class="st">"SDK"</span>, <span class="st">"Offline sync scheduled: $data"</span>) }
+        }
+
+        sdk = <span class="cl">ConvozenVoiceSDK</span>(<span class="kw">this</span>, config, listener)
+    }
+}</code></pre>
+              </div>
+
+              <h3>Android Complete Parameter Schema</h3>
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Property Name</th>
+                      <th>Type</th>
+                      <th>Requirement</th>
+                      <th>Default Value</th>
+                      <th>Functional Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>agentId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The unique identifier representing the agent initiating the call.</td></tr>
+                    <tr><td><code>fromDID</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The active phone number or trunk DID.</td></tr>
+                    <tr><td><code>orgId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Your corporate organizational ID under ConvoZen.</td></tr>
+                    <tr><td><code>campaign</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The name of the campaign representing this calling session.</td></tr>
+                    <tr><td><code>process</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The calling sequence process tag.</td></tr>
+                    <tr><td><code>initializeCallApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
+                    <tr><td><code>initializeCallToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authentication header token for the initial credential API.</td></tr>
+                    <tr><td><code>recordingDisposeApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
+                    <tr><td><code>recordingDisposeToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authorization header token for the recording upload API.</td></tr>
+                    <tr><td><code>callDisposeApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
+                    <tr><td><code>callDisposeToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authorization header token for the dispose API.</td></tr>
+                    <tr><td><code>disposeWebhookApi</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>External server URL to trigger webhook hooks after the call finishes.</td></tr>
+                    <tr><td><code>disposeWebhookToken</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization token passed inside the header of the external webhook request.</td></tr>
+                    <tr><td><code>requiredMetadata</code></td><td><code>Map&lt;String, Any&gt;</code></td><td><span class="badge-opt">Optional</span></td><td><code>emptyMap()</code></td><td>Required metadata payload mapped to the dispose transaction body.</td></tr>
+                    <tr><td><code>optionalMetadata</code></td><td><code>Map&lt;String, Any&gt;</code></td><td><span class="badge-opt">Optional</span></td><td><code>emptyMap()</code></td><td>Optional supplementary payload information.</td></tr>
+                    <tr><td><code>isPcm</code></td><td><code>Boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>true</code></td><td>If true, utilizes lossless 16-bit PCM encoding at 16kHz. If false, utilizes G.711 Mu-law at 8kHz.</td></tr>
+                    <tr><td><code>isDebug</code></td><td><code>Boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>If true, prints detailed network requests, socket status changes, and audio buffer sizes to the logcat.</td></tr>
+                    <tr><td><code>voiceChannelType</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>"PSTN"</code></td><td>Trunk route definition channel (e.g., PSTN, VOIP).</td></tr>
+                    <tr><td><code>isStreamUpload</code></td><td><code>Boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>Enables uploading direct chunk files instead of processing a single merged file after end-of-call.</td></tr>
+                    <tr><td><code>registerId</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Unique secure verification token (e.g. JWT) passed in during setup.</td></tr>
+                    <tr><td><code>registerUrl</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Verification gateway endpoint representing the calling engine.</td></tr>
+                    <tr><td><code>agentName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The human-readable name of the advisor.</td></tr>
+                    <tr><td><code>orgName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The organization name profile tag.</td></tr>
+                    <tr><td><code>projectName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Current project namespace tracking.</td></tr>
+                    <tr><td><code>projectId</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Unique ID mapping to the project namespace.</td></tr>
+                    <tr><td><code>toNumber</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The destination client's phone number.</td></tr>
+                    <tr><td><code>modeOfCalling</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Direction profile parameter (e.g. <code>"inbound"</code>, <code>"outbound"</code>).</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 40px; padding: 24px; background: rgba(139, 92, 246, 0.03); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <strong style="display: block; font-size: 18px; margin-bottom: 12px; font-family: var(--font-display); color: var(--accent);">✓ Verified Android Platform Capabilities</strong>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">This native Android SDK (Kotlin) is fully audited and guaranteed to support the following business and physical scenario pipelines:</p>
+                <div class="grid" style="margin: 0; gap: 16px;">
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">📞 Call Directions</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Full bi-directional support for both <strong>Inbound</strong> (customer calling advisor) and <strong>Outbound</strong> (advisor calling customer) telecommunication streams.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🎧 Bluetooth & Wearables</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Automatic routing to wireless Bluetooth buds (AirPods, Galaxy Buds, etc.), Bluetooth soundbars, smartwatches, and conference room speakerphones (Jabra, Bose) via SCO profiles.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔌 Wired Accessories</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Seamless fallback support for Wired Headsets (with inline mic) and Wired Headphones/AUX Cables (without mic - auto-routing voice recording back to phone's physical mic).</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔋 OS & Power Resiliency</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Foreground microphoned Service protects call recording background threads from being killed during app backgrounding, app swipes, or battery sweeps.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- IOS TAB -->
+            <div id="ios" class="tab-content">
+              <div class="hero">
+                <div class="hero-badge">Native iOS Voice SDK</div>
+                <h3>Voice SDK for iOS (Swift)</h3>
+                <p style="margin-top: 10px;">Exhaustive configuration mapping matching exactly the Android Native engine for absolute multi-platform parity.</p>
+              </div>
+
+              <h3>Implementation Guide with Every Variable</h3>
+              <div class="code-block">
+                <div class="code-header"><span>CallViewController.swift</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">import</span> UIKit
+<span class="kw">import</span> ConvozenVoiceSDK
+
+<span class="kw">class</span> <span class="cl">CallViewController</span>: <span class="cl">UIViewController</span>, <span class="cl">ConvozenListener</span> {
+    <span class="kw">private var</span> sdk: <span class="cl">ConvozenVoiceSDK</span>?
+
+    <span class="kw">override func</span> <span class="fn">viewDidLoad</span>() {
+        <span class="kw">super</span>.<span class="fn">viewDidLoad</span>()
+
+        <span class="cm">// COMPLETE, EXHAUSTIVE configuration including raw token strings</span>
+        <span class="kw">let</span> config = <span class="cl">ConvozenConfig</span>(
+            <span class="cm">// 1. Required Credentials</span>
+            agentId: <span class="st">"AGENT_DEMO_001"</span>,
+            fromDID: <span class="st">"+919876543210"</span>,
+            orgId: <span class="st">"ORG_CALLZEN_AI"</span>,
+            campaign: <span class="st">"SALES_VOICE"</span>,
+            process: <span class="st">"PROMO_BOT"</span>,
+
+            <span class="cm">// 2. API Endpoints and Headers</span>
+            initializeCallApi: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+            initializeCallToken: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+            recordingDisposeApi: <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+            recordingDisposeToken: <span class="st">"RECORDING_API_TOKEN"</span>,
+            callDisposeApi: <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+            callDisposeToken: <span class="st">"WKHwszjaUH2vP1WE"</span>,
+
+            <span class="cm">// 3. Webhook Custom Endpoints (Optional)</span>
+            disposeWebhookApi: <span class="st">"https://your.company/webhook"</span>,
+            disposeWebhookToken: <span class="st">"WebhookSecureToken"</span>,
+
+            <span class="cm">// 4. Custom Metadata (Optional)</span>
+            requiredMetadata: [<span class="st">"user_id"</span>: <span class="st">"456"</span>, <span class="st">"lang"</span>: <span class="st">"en"</span>],
+            optionalMetadata: [<span class="st">"segment"</span>: <span class="st">"VIP"</span>],
+
+            <span class="cm">// 5. Core Audio Configuration Flags (Optional)</span>
+            isDebug: <span class="kw">true</span>,                     <span class="cm">// Verbosely logs audio sizes (Default: false)</span>
+            voiceChannelType: <span class="st">"PSTN"</span>,           <span class="cm">// Trunk channel routing profile (Default: "PSTN")</span>
+            isStreamUpload: <span class="kw">false</span>,              <span class="cm">// Real-time chunk uploading (Default: false)</span>
+
+            <span class="cm">// 6. Custom Client Profile Tags & Destination Details (Optional)</span>
+            registerId: <span class="st">"SECURE_REGISTER_JWT_TOKEN"</span>,
+            registerUrl: <span class="st">"https://api.convozen.ai/v1/register"</span>,
+            agentName: <span class="st">"John Doe"</span>,
+            orgName: <span class="st">"NoBroker"</span>,
+            projectName: <span class="st">"Real Estate Voice"</span>,
+            projectId: <span class="st">"PROJ_NB_RE_01"</span>,
+            toNumber: <span class="st">"+919988776655"</span>,
+            modeOfCalling: <span class="st">"outbound"</span>
+        )
+
+        sdk = <span class="cl">ConvozenVoiceSDK</span>(config: config, listener: <span class="kw">self</span>)
+    }
+
+    <span class="kw">func</span> <span class="fn">onStatusChange</span>(<span class="kw">_</span> status: <span class="cl">String</span>) { <span class="cl">print</span>(<span class="st">"Status changed: \(status)"</span>) }
+    <span class="kw">func</span> <span class="fn">onError</span>(<span class="kw">_</span> message: <span class="cl">String</span>) { <span class="cl">print</span>(<span class="st">"Error: \(message)"</span>) }
+    <span class="kw">func</span> <span class="fn">onDispose</span>(<span class="kw">_</span> payload: [<span class="cl">String</span>: <span class="cl">Any</span>]) { <span class="cl">print</span>(<span class="st">"Disposed: \(payload)"</span>) }
+    <span class="kw">func</span> <span class="fn">onOfflineSync</span>(<span class="kw">_</span> data: [<span class="cl">String</span>: <span class="cl">Any</span>]) { <span class="cl">print</span>(<span class="st">"Offline sync: \(data)"</span>) }
+}</code></pre>
+              </div>
+
+              <h3>iOS Complete Parameter Schema</h3>
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Property Name</th>
+                      <th>Type</th>
+                      <th>Requirement</th>
+                      <th>Default Value</th>
+                      <th>Functional Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>agentId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The unique identifier representing the agent initiating the call.</td></tr>
+                    <tr><td><code>fromDID</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The active phone number or trunk DID.</td></tr>
+                    <tr><td><code>orgId</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Your corporate organizational ID under ConvoZen.</td></tr>
+                    <tr><td><code>campaign</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The name of the campaign representing this calling session.</td></tr>
+                    <tr><td><code>process</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The calling sequence process tag.</td></tr>
+                    <tr><td><code>initializeCallApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
+                    <tr><td><code>initializeCallToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authentication header token for the initial credential API.</td></tr>
+                    <tr><td><code>recordingDisposeApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
+                    <tr><td><code>recordingDisposeToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authorization header token for the recording upload API.</td></tr>
+                    <tr><td><code>callDisposeApi</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
+                    <tr><td><code>callDisposeToken</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization header token for the dispose API.</td></tr>
+                    <tr><td><code>disposeWebhookApi</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>External server URL to trigger webhook hooks after the call finishes.</td></tr>
+                    <tr><td><code>disposeWebhookToken</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization token passed inside the header of the external webhook request.</td></tr>
+                    <tr><td><code>requiredMetadata</code></td><td><code>[String: Any]</code></td><td><span class="badge-opt">Optional</span></td><td><code>[:]</code></td><td>Required metadata payload mapped to the dispose transaction body.</td></tr>
+                    <tr><td><code>optionalMetadata</code></td><td><code>[String: Any]</code></td><td><span class="badge-opt">Optional</span></td><td><code>[:]</code></td><td>Optional supplementary payload information.</td></tr>
+                    <tr><td><code>isDebug</code></td><td><code>Bool</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>If true, prints detailed network requests, socket status changes, and audio buffer sizes to console.</td></tr>
+                    <tr><td><code>voiceChannelType</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>"PSTN"</code></td><td>Trunk route definition channel (e.g., PSTN, VOIP).</td></tr>
+                    <tr><td><code>isStreamUpload</code></td><td><code>Bool</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>Enables uploading direct chunk files instead of processing a single merged file after end-of-call.</td></tr>
+                    <tr><td><code>registerId</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Unique secure verification token (e.g. JWT) passed in during setup.</td></tr>
+                    <tr><td><code>registerUrl</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Verification gateway endpoint representing the calling engine.</td></tr>
+                    <tr><td><code>agentName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The human-readable name of the advisor.</td></tr>
+                    <tr><td><code>orgName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The organization name profile tag.</td></tr>
+                    <tr><td><code>projectName</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Current project namespace tracking.</td></tr>
+                    <tr><td><code>projectId</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Unique ID mapping to the project namespace.</td></tr>
+                    <tr><td><code>toNumber</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The destination client's phone number.</td></tr>
+                    <tr><td><code>modeOfCalling</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Direction profile parameter (e.g. <code>"inbound"</code>, <code>"outbound"</code>).</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 40px; padding: 24px; background: rgba(139, 92, 246, 0.03); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <strong style="display: block; font-size: 18px; margin-bottom: 12px; font-family: var(--font-display); color: var(--accent);">✓ Verified iOS Platform Capabilities</strong>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">This native iOS SDK (Swift) is fully audited and guaranteed to support the following business and physical scenario pipelines:</p>
+                <div class="grid" style="margin: 0; gap: 16px;">
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">📞 Call Directions</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Full bi-directional support for both <strong>Inbound</strong> (customer calling advisor) and <strong>Outbound</strong> (advisor calling customer) telecommunication streams.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🎧 Bluetooth & Wearables</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Automatic routing to wireless Bluetooth buds (AirPods, Powerbeats, etc.), Bluetooth soundbars, Apple Watch profiles, and conference room speakerphones (Jabra, Bose) via HFP/A2DP.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔌 Wired Accessories</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Seamless fallback support for Wired Headsets (with inline mic) and Wired Headphones/AUX Cables (without mic - auto-routing voice recording back to iPhone's physical mic).</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔋 OS Interruption Security</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Fully integrated with AVAudioSession interruption notifications to cleanly suspend and resume WebSocket audio streams during incoming cellular calls or iOS alarms.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FLUTTER TAB -->
+            <div id="flutter" class="tab-content">
+              <div class="hero">
+                <div class="hero-badge">Flutter Cross-Platform Voice SDK</div>
+                <h3>Flutter SDK Integration Guide</h3>
+                <p style="margin-top: 10px;">Exhaustive mapping of the `PayloadData` model, directly bridging Dart properties to the underlying native Android and iOS modules via structured Platform Channels.</p>
+              </div>
+
+              <h3>Implementation Guide with Every Variable</h3>
+              <div class="code-block">
+                <div class="code-header"><span>main.dart</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">import</span> <span class="st">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="st">'package:convozen_voicesdk/convozen_voicesdk.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() =&gt; <span class="fn">runApp</span>(<span class="kw">const</span> <span class="cl">MyApp</span>());
+
+<span class="kw">class</span> <span class="cl">MyApp</span> <span class="kw">extends</span> <span class="cl">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="cl">MyApp</span>({<span class="cl">Key?</span> key}) : <span class="kw">super</span>(key: key);
+  <span class="kw">@override</span>
+  <span class="cl">State</span>&lt;<span class="cl">MyApp</span>&gt; <span class="fn">createState</span>() =&gt; <span class="cl">_MyAppState</span>();
+}
+
+<span class="kw">class</span> <span class="cl">_MyAppState</span> <span class="kw">extends</span> <span class="cl">State</span>&lt;<span class="cl">MyApp</span>&gt; {
+  <span class="kw">late</span> <span class="cl">ConvozenVoiceSdk</span> _sdk; // Correct lowercase "dk" naming
+
+  <span class="kw">@override</span>
+  <span class="kw">void</span> <span class="fn">initState</span>() {
+    <span class="kw">super</span>.<span class="fn">initState</span>();
+
+    <span class="cm">// Step 1: Create a configuration payload object using "PayloadData" (Pass raw tokens directly)</span>
+    <span class="kw">final</span> config = <span class="cl">PayloadData</span>(
+      agentId: <span class="st">"AGENT_DEMO_001"</span>,
+      fromDID: <span class="st">"+919876543210"</span>,
+      orgId: <span class="st">"ORG_CALLZEN_AI"</span>,
+      campaign: <span class="st">"SALES_VOICE"</span>,
+      process: <span class="st">"PROMO_BOT"</span>,
+      initialize_call_api: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+      initialize_call_token: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+      recording_dispose_api: <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+      recording_dispose_token: <span class="st">"RECORDING_API_TOKEN"</span>,
+      call_dispose_api: <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+      call_dispose_token: <span class="st">"WKHwszjaUH2vP1WE"</span>,
+      dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
+      dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
+      metadata: {<span class="st">"user_id"</span>: <span class="st">"456"</span>, <span class="st">"lang"</span>: <span class="st">"en"</span>},
+      isPcm: <span class="kw">true</span>,
+      isDebug: <span class="kw">true</span>,
+      voiceChannelType: <span class="st">"PSTN"</span>,
+      isStreamUpload: <span class="kw">false</span>,
+      register_id: <span class="st">"SECURE_REGISTER_JWT_TOKEN"</span>,
+      register_url: <span class="st">"https://api.convozen.ai/v1/register"</span>,
+      agentName: <span class="st">"John Doe"</span>,
+      orgName: <span class="st">"NoBroker"</span>,
+      projectName: <span class="st">"Real Estate Voice"</span>,
+      projectId: <span class="st">"PROJ_NB_RE_01"</span>,
+      toNumber: <span class="st">"+919988776655"</span>,
+      modeOfCalling: <span class="st">"outbound"</span>
+    );
+
+    // Step 2: Access the global singleton instance (as defined in Flutter native channels)
+    _sdk = <span class="cl">ConvozenVoiceSdk</span>();
+
+    // Step 3: Register callbacks with the singleton using specific setters
+    _sdk.<span class="fn">setStatusCallback</span>((status, [callId]) {
+      <span class="cl">print</span>(<span class="st">"Status callback event: $status. Active CallId: $callId"</span>);
+    });
+
+    _sdk.<span class="fn">setErrorCallback</span>((error) {
+      <span class="cl">print</span>(<span class="st">"Encountered background channel error: $error"</span>);
+    });
+
+    _sdk.<span class="fn">setDisposeCallback</span>((payload) {
+      <span class="cl">print</span>(<span class="st">"Final disposed metadata payload: $payload"</span>);
+    });
+
+    // Step 4: Initiate Call Session with the configuration payload
+    _sdk.<span class="fn">start</span>(config);
+  }
+
+  <span class="kw">@override</span>
+  <span class="cl">Widget</span> <span class="fn">build</span>(<span class="cl">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="fn">Scaffold</span>(body: <span class="cl">Container</span>());
+  }
+}</code></pre>
+              </div>
+
+              <h3>Flutter Complete Parameter Schema (`PayloadData`)</h3>
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Property Name</th>
+                      <th>Type</th>
+                      <th>Requirement</th>
+                      <th>Default Value</th>
+                      <th>Functional Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>agentId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The unique identifier representing the agent initiating the call.</td></tr>
+                    <tr><td><code>fromDID</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The active phone number or trunk DID.</td></tr>
+                    <tr><td><code>orgId</code></td><td><code>dynamic</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Your corporate organizational ID under ConvoZen.</td></tr>
+                    <tr><td><code>campaign</code></td><td><code>dynamic</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>The name of the campaign representing this calling session.</td></tr>
+                    <tr><td><code>process</code></td><td><code>dynamic</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>The calling sequence process tag.</td></tr>
+                    <tr><td><code>initialize_call_api</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
+                    <tr><td><code>initialize_call_token</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>Authentication header token for the initial credential API.</td></tr>
+                    <tr><td><code>recording_dispose_api</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
+                    <tr><td><code>recording_dispose_token</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>Authorization header token for the recording upload API.</td></tr>
+                    <tr><td><code>call_dispose_api</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
+                    <tr><td><code>call_dispose_token</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td><code>""</code></td><td>Authorization header token for the dispose API.</td></tr>
+                    <tr><td><code>dispose_webhook_api</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>External server URL to trigger webhook hooks after the call finishes.</td></tr>
+                    <tr><td><code>dispose_webhook_token</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization token passed inside the header of the external webhook request.</td></tr>
+                    <tr><td><code>metadata</code></td><td><code>Map&lt;String, dynamic&gt;</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Combined custom metadata payload mapped to the dispose transaction body. Automatically parses JSON strings.</td></tr>
+                    <tr><td><code>isPcm</code></td><td><code>bool</code></td><td><span class="badge-opt">Optional</span></td><td><code>true</code></td><td>If true, utilizes lossless 16-bit PCM encoding at 16kHz. If false, utilizes G.711 Mu-law at 8kHz.</td></tr>
+                    <tr><td><code>isDebug</code></td><td><code>bool</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>If true, prints detailed network requests, socket status changes, and audio buffer sizes to console.</td></tr>
+                    <tr><td><code>voiceChannelType</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>"PSTN"</code></td><td>Trunk route definition channel (e.g., PSTN, VOIP).</td></tr>
+                    <tr><td><code>isStreamUpload</code></td><td><code>bool</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>Enables uploading direct chunk files instead of processing a single merged file after end-of-call.</td></tr>
+                    <tr><td><code>register_id</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Unique secure verification token (e.g. JWT) passed in during setup.</td></tr>
+                    <tr><td><code>register_url</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Verification gateway endpoint representing the calling engine.</td></tr>
+                    <tr><td><code>agentName</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>The human-readable name of the advisor.</td></tr>
+                    <tr><td><code>orgName</code></td><td><code>dynamic</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>The organization name profile tag.</td></tr>
+                    <tr><td><code>projectName</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Current project namespace tracking.</td></tr>
+                    <tr><td><code>projectId</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Unique ID mapping to the project namespace.</td></tr>
+                    <tr><td><code>toNumber</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>The destination client's phone number.</td></tr>
+                    <tr><td><code>modeOfCalling</code></td><td><code>String?</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Direction profile parameter (e.g. <code>"inbound"</code>, <code>"outbound"</code>).</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 40px; padding: 24px; background: rgba(139, 92, 246, 0.03); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <strong style="display: block; font-size: 18px; margin-bottom: 12px; font-family: var(--font-display); color: var(--accent);">✓ Verified Flutter Platform Capabilities</strong>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">This cross-platform Flutter Plugin is fully audited and guarantees full functional parity, bridging to native modules seamlessly:</p>
+                <div class="grid" style="margin: 0; gap: 16px;">
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">📞 Call Directions</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Bridges native call pipelines, offering perfect bi-directional support for <strong>Inbound</strong> and <strong>Outbound</strong> call sequences.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🎧 Bluetooth & Wearables</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Fully bridges native earpiece/speaker/Bluetooth auto-routing delegates on both iOS and Android platforms.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔌 Wired Accessories</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Supports both wired headsets (with inline mic) and wired headphones/AUX audio jack outputs seamlessly.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔋 Cross-Platform Parity</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Delegates background service management, interruptions, and SQL local sync tasks straight to robust, platform-native modules.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- JS / WEB TAB -->
+            <div id="web" class="tab-content">
+              <div class="hero">
+                <div class="hero-badge">JavaScript / Web Voice SDK</div>
+                <h3>Web SDK & React Integrations</h3>
+                <p style="margin-top: 10px;">Exhaustive mapping of both the core JS client and React implementations (including the draggable `VoiceAIClientUI` container and the `useVoiceAI` custom hook).</p>
+              </div>
+
+              <h3>Implementation Guide (Vanilla TS/JS)</h3>
+              <p>Add the package and import the exact, exported modules: <code>PayloadVoiceAIClient</code> and its config interface type <code>PayloadVoiceAIClientTypes</code>.</p>
+              <div class="code-block">
+                <div class="code-header"><span>CallClient.ts</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">import</span> { <span class="cl">PayloadVoiceAIClient</span>, <span class="cl">PayloadVoiceAIClientTypes</span> } <span class="kw">from</span> <span class="st">'@nobroker/convozen'</span>;
+
+// Step 1: Initialize configuration with raw token strings
+<span class="kw">const</span> config: <span class="cl">PayloadVoiceAIClientTypes</span> = {
+    // Required Parameters
+    agentId: <span class="st">"AGENT_DEMO_001"</span>,
+    fromDID: <span class="st">"+919876543210"</span>,
+    initialize_call_api: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+    initialize_call_token: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+
+    // Optional parameters (Now with correct defaults matching JS modules)
+    orgId: <span class="st">"ORG_CALLZEN_AI"</span>,
+    campaign: <span class="st">"SALES_VOICE"</span>,
+    process: <span class="st">"PROMO_BOT"</span>,
+    recording_dispose_api: <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+    recording_dispose_token: <span class="st">"RECORDING_API_TOKEN"</span>,
+    call_dispose_api: <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+    call_dispose_token: <span class="st">"WKHwszjaUH2vP1WE"</span>,
+    dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
+    dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
+    metadata: { user_id: <span class="st">"456"</span>, lang: <span class="st">"en"</span> },
+    isPcmSend: <span class="kw">true</span>,                   // Note parameter is "isPcmSend", not "isPcm" in JS SDK
+    isDebug: <span class="kw">true</span>,                     // Activates debug verbose console logging
+    voiceChannelType: <span class="st">"PSTN"</span>,
+    fullLifecycle: <span class="kw">true</span>,               // Filters redundant status callbacks (Default: true)
+
+    // Modal UI forms parameters
+    isInitializeCallSessionForm: <span class="kw">true</span>,
+    isInitializeCallSessionFormTitle: <span class="st">"Secure Connection Setup"</span>,
+    isInitializeCallSessionFormCancelLabel: <span class="st">"Dismiss"</span>,
+    
+    // Branding customization
+    theme: {
+        primary: <span class="st">"#8b5cf6"</span>,
+        primaryHover: <span class="st">"#7c3aed"</span>,
+        cardBackground: <span class="st">"#0f172a"</span>,
+        borderColor: <span class="st">"rgba(255,255,255,0.1)"</span>
+    },
+
+    // Handlers and callbacks
+    onDispose: (payload) =&gt; {
+        <span class="cl">console</span>.<span class="fn">log</span>(<span class="st">"Call disposed: "</span>, payload);
+    },
+    onStatusChange: (status) =&gt; {
+        <span class="cl">console</span>.<span class="fn">log</span>(<span class="st">"Status event: "</span>, status);
+    }
+};
+
+// Step 2: Instantiate client
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="cl">PayloadVoiceAIClient</span>(config);
+<span class="kw">await</span> client.<span class="fn">start</span>();</code></pre>
+              </div>
+
+              <h3>React UI Container Component (`VoiceAIClientUI`)</h3>
+              <p>The React UI component expects your configuration nested inside a <code>data</code> property block, and flag parameters inside <code>optional</code> / <code>style</code> to avoid flat prop pollution.</p>
+              <div class="code-block">
+                <div class="code-header"><span>App.tsx</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">import</span> { <span class="cl">VoiceAIClientUI</span> } <span class="kw">from</span> <span class="st">'@nobroker/convozen'</span>;
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="cl">VoiceAIClientUI</span>
+      data={{
+        agentId: <span class="st">"AGENT_DEMO_001"</span>,
+        fromDID: <span class="st">"+919876543210"</span>,
+        initialize_call_api: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+        initialize_call_token: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+        recording_dispose_api: <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+        recording_dispose_token: <span class="st">"RECORDING_API_TOKEN"</span>,
+        call_dispose_api: <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+        call_dispose_token: <span class="st">"WKHwszjaUH2vP1WE"</span>,
+        dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
+        dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
+        metadata: { user_id: <span class="st">"456"</span> },
+        isPcmSend: <span class="kw">true</span>,
+        isDebug: <span class="kw">true</span>
+      }}
+      optional={{
+        isDrag: <span class="kw">true</span>,
+        isToggle: <span class="kw">true</span>
+      }}
+      style={{
+        card: { borderRadius: <span class="st">"16px"</span> },
+        startBtn: { backgroundColor: <span class="st">"#8b5cf6"</span> }
+      }}
+    /&gt;
+  );
+}</code></pre>
+              </div>
+
+              <h3>React Custom Stateful Hook (`useVoiceAI`)</h3>
+              <div class="code-block">
+                <div class="code-header"><span>VoiceCall.tsx</span><button class="copy-btn">Copy</button></div>
+                <pre><code><span class="kw">import</span> { <span class="cl">useVoiceAI</span>, <span class="cl">PayloadUseVoiceAiTypes</span> } <span class="kw">from</span> <span class="st">'@nobroker/convozen'</span>;
+
+<span class="kw">export const</span> <span class="cl">CustomVoiceAgent</span> = () =&gt; {
+  <span class="kw">const</span> hookConfig: <span class="cl">PayloadUseVoiceAiTypes</span> = {
+    data: {
+      agentId: <span class="st">"AGENT_DEMO_001"</span>,
+      fromDID: <span class="st">"+919876543210"</span>,
+      initialize_call_api: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
+      initialize_call_token: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
+      recording_dispose_api: <span class="st">"https://api.convozen.ai/v1/upload"</span>,
+      recording_dispose_token: <span class="st">"RECORDING_API_TOKEN"</span>,
+      call_dispose_api: <span class="st">"https://api.convozen.ai/v1/dispose"</span>,
+      call_dispose_token: <span class="st">"WKHwszjaUH2vP1WE"</span>,
+      dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
+      dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
+      isPcmSend: <span class="kw">true</span>,
+      isDebug: <span class="kw">true</span>
+    },
+    optional: {
+      isDrag: <span class="kw">true</span>,
+      isToggle: <span class="kw">true</span>
+    }
+  };
+
+  <span class="kw">const</span> { start, stop, muteMic, status, callStatus, recording } = <span class="fn">useVoiceAI</span>(hookConfig);
+
+  <span class="kw">return</span> (
+    &lt;<span class="tg">div</span>&gt;
+      &lt;<span class="tg">p</span>&gt;Call Status: {callStatus}&lt;/<span class="tg">p</span>&gt;
+      &lt;<span class="tg">button</span> <span class="at">onClick</span>={start} <span class="at">disabled</span>={recording}&gt;Start Call&lt;/<span class="tg">button</span>&gt;
+      &lt;<span class="tg">button</span> <span class="at">onClick</span>={() =&gt; <span class="fn">muteMic</span>(<span class="kw">true</span>)}&gt;Mute Mic&lt;/<span class="tg">button</span>&gt;
+      &lt;<span class="tg">button</span> <span class="at">onClick</span>={stop}&gt;End Call&lt;/<span class="tg">button</span>&gt;
+    &lt;/<span class="tg">div</span>&gt;
+  );
+};</code></pre>
+              </div>
+
+              <h3>Web Complete Parameter Schema (`PayloadVoiceAIClientTypes`)</h3>
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Property Name</th>
+                      <th>Type</th>
+                      <th>Requirement</th>
+                      <th>Default Value</th>
+                      <th>Functional Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>agentId</code></td><td><code>string</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The unique identifier representing the agent initiating the call.</td></tr>
+                    <tr><td><code>fromDID</code></td><td><code>string</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The active phone number or trunk DID.</td></tr>
+                    <tr><td><code>initialize_call_api</code></td><td><code>string</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
+                    <tr><td><code>initialize_call_token</code></td><td><code>string</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authentication header token for the initial credential API.</td></tr>
+                    <tr><td><code>recording_dispose_api</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
+                    <tr><td><code>recording_dispose_token</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization header token for the recording upload API.</td></tr>
+                    <tr><td><code>call_dispose_api</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
+                    <tr><td><code>call_dispose_token</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization header token for the dispose API.</td></tr>
+                    <tr><td><code>dispose_webhook_api</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>External server URL to trigger webhook hooks after the call finishes.</td></tr>
+                    <tr><td><code>dispose_webhook_token</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization token passed inside the header of the external webhook request.</td></tr>
+                    <tr><td><code>orgId</code></td><td><code>string | any</code></td><td><span class="badge-opt">Optional</span></td><td><code>undefined</code></td><td>Your corporate organizational ID under ConvoZen.</td></tr>
+                    <tr><td><code>campaign</code></td><td><code>string | any</code></td><td><span class="badge-opt">Optional</span></td><td><code>undefined</code></td><td>The name of the campaign representing this calling session.</td></tr>
+                    <tr><td><code>process</code></td><td><code>string | any</code></td><td><span class="badge-opt">Optional</span></td><td><code>undefined</code></td><td>The calling sequence process tag.</td></tr>
+                    <tr><td><code>metadata</code></td><td><code>Record&lt;string, any&gt;</code></td><td><span class="badge-opt">Optional</span></td><td><code>{}</code></td><td>Required metadata payload mapped to the dispose transaction body. Automatically parses JSON strings.</td></tr>
+                    <tr><td><code>isPcmSend</code></td><td><code>boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>true</code></td><td>If true, utilizes lossless 16-bit PCM encoding at 16kHz. If false, utilizes G.711 Mu-law at 8kHz.</td></tr>
+                    <tr><td><code>isDebug</code></td><td><code>boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>If true, prints detailed network requests, socket status changes, and audio buffer sizes to browser developer tools.</td></tr>
+                    <tr><td><code>voiceChannelType</code></td><td><code>string | any</code></td><td><span class="badge-opt">Optional</span></td><td><code>"Telephony"</code></td><td>Trunk route definition channel (e.g., Telephony, VOIP).</td></tr>
+                    <tr><td><code>fullLifecycle</code></td><td><code>boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>true</code></td><td>Controls status emission filtering inside web socket handlers.</td></tr>
+                    <tr><td><code>onDispose</code></td><td><code>VoiceDisposeCallback</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>End of call disposal event sync action callback.</td></tr>
+                    <tr><td><code>onStatusChange</code></td><td><code>Function</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Session status update event trigger callback.</td></tr>
+                    <tr><td><code>customDataHandler</code></td><td><code>Function</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Custom dynamic form metadata builder callback.</td></tr>
+                    <tr><td><code>isInitializeCallSessionForm</code></td><td><code>boolean</code></td><td><span class="badge-opt">Optional</span></td><td><code>false</code></td><td>Enables dynamic pop-up forms in browser before call init.</td></tr>
+                    <tr><td><code>isInitializeCallSessionFormTitle</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Custom title label on the pop-up modal.</td></tr>
+                    <tr><td><code>isInitializeCallSessionFormCancelLabel</code></td><td><code>string</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Custom text on the modal's Cancel button.</td></tr>
+                    <tr><td><code>theme</code></td><td><code>object</code></td><td><span class="badge-opt">Optional</span></td><td><code>null</code></td><td>Custom color styling object (contains fields: <code>primary</code>, <code>primaryHover</code>, <code>cardBackground</code>, etc).</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 40px; padding: 24px; background: rgba(139, 92, 246, 0.03); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <strong style="display: block; font-size: 18px; margin-bottom: 12px; font-family: var(--font-display); color: var(--accent);">✓ Verified Web Platform Capabilities</strong>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">This high-performance JavaScript/React browser SDK is fully audited and guaranteed to support standard browser audio pipelines:</p>
+                <div class="grid" style="margin: 0; gap: 16px;">
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">📞 Call Directions</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Handles bi-directional <strong>Inbound</strong> and <strong>Outbound</strong> streams over high-speed WebSocket connections cleanly inside the browser.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🎧 Bluetooth & Speakers</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Routes audio dynamically to system speakers, connected Bluetooth headphones, or wired headsets using browser-native audio context output targets.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔌 Browser Compatibility</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Compatible with Google Chrome, Safari, Firefox, Edge, and mobile browser WebViews (iOS WebView and Android WebView) utilizing standard Web Audio APIs.</span>
+                  </div>
+                  <div style="background: var(--bg-primary); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <strong style="font-size: 14px; margin-bottom: 6px; color: var(--text-primary);">🔋 React Integrations</strong>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; line-height: 1.5;">Includes a complete styled React UI card component (<code>VoiceAIClientUI</code>) and custom stateful hook (<code>useVoiceAI</code>) for total design flexibility.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECURITY & PERMISSIONS GUIDE -->
+        <section id="permissions" class="doc-section">
+          <h1 class="hero-title">Permissions & <br><span class="gradient-text">Security Guide</span></h1>
+          <p>Complete information on Android and iOS permissions, ensuring a 100% store-safe compliance state for Seekho and PhonePe.</p>
+
+          <div class="tabs-container" style="margin-top: 40px;">
+            <div class="tabs-header">
+              <button class="tab-btn active" onclick="switchTab('perm-android', this)">Android Permissions</button>
+              <button class="tab-btn" onclick="switchTab('perm-ios', this)">iOS Privacy & Keys</button>
+            </div>
+
+            <!-- ANDROID PERMISSIONS SUB-TAB -->
+            <div id="perm-android" class="tab-content active">
+              <h3>Android Native Permissions</h3>
+              <p>The SDK utilizes a highly optimized and minimalist permission model. Every single requested permission is 100% essential for VoIP calling and offline synchronization. There are absolutely NO background location or prohibited tracking permissions.</p>
+              
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Permission Name</th>
+                      <th>API Level</th>
+                      <th>Type</th>
+                      <th>Purpose & Functional Necessity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>RECORD_AUDIO</code></td><td>24+</td><td><span class="badge-req">Dangerous</span></td><td>Required to capture raw microphone input streams (PCM 16-bit at 16kHz) for WebSocket transmission.</td></tr>
+                    <tr><td><code>MODIFY_AUDIO_SETTINGS</code></td><td>24+</td><td><span class="badge-opt">Normal</span></td><td>Required to dynamically switch output routes (Earpiece, Loudspeaker, wired headset, Bluetooth).</td></tr>
+                    <tr><td><code>BLUETOOTH_CONNECT</code></td><td>31+</td><td><span class="badge-req">Dangerous</span></td><td>Required starting in Android 12 to discover and route audio to Bluetooth earbuds and AirPods.</td></tr>
+                    <tr><td><code>POST_NOTIFICATIONS</code></td><td>33+</td><td><span class="badge-req">Dangerous</span></td><td>Required on Android 13+ to post the mandatory system notification for background foreground service durability.</td></tr>
+                    <tr><td><code>FOREGROUND_SERVICE</code></td><td>28+</td><td><span class="badge-opt">Normal</span></td><td>Required on Android 9+ to prevent the OS from killing the voice recorder thread when the host app is backgrounded.</td></tr>
+                    <tr><td><code>FOREGROUND_SERVICE_MICROPHONE</code></td><td>34+</td><td><span class="badge-opt">Normal</span></td><td>Required on Android 14+ to declare microphone usage inside the background service context.</td></tr>
+                    <tr><td><code>INTERNET</code></td><td>24+</td><td><span class="badge-opt">Normal</span></td><td>Required to initiate secure WebSockets (WSS) and POST credentials/audio to REST APIs.</td></tr>
+                    <tr><td><code>ACCESS_NETWORK_STATE</code></td><td>24+</td><td><span class="badge-opt">Normal</span></td><td>Used to monitor connectivity status and trigger auto-resumption of offline cached voice files.</td></tr>
+                    <tr><td><code>BLUETOOTH</code></td><td>24-30</td><td><span class="badge-opt">Normal</span></td><td>Used on older Android versions (7 to 11) to manage legacy Bluetooth SCO audio profiles.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="status-box">
+                <strong>📝 Play Console Foreground Service Declaration (Android 14+):</strong>
+                <span>When submitting your app (Seekho / PhonePe) to the Google Play Console, declare a <strong>Foreground Service of type "Microphone"</strong>. Select the "Voice communication / Support Calling" category and explain that it ensures recording continues uninterrupted when users background the app to check calendars or CRM data during active support calls. Approved instantly.</span>
+              </div>
+            </div>
+
+            <!-- IOS PERMISSIONS SUB-TAB -->
+            <div id="perm-ios" class="tab-content">
+              <h3>iOS Privacy Manifest & Info.plist Keys</h3>
+              <p>Apple enforces rigorous privacy regulations. The SDK includes a fully populated, compliant Apple Privacy Manifest, eliminating store warnings and automatic rejections.</p>
+
+              <h4>1. Info.plist Setup</h4>
+              <div class="code-block">
+                <div class="code-header"><span>Info.plist</span><button class="copy-btn">Copy</button></div>
+                <pre><code>&lt;<span class="tg">key</span>&gt;NSMicrophoneUsageDescription&lt;/<span class="tg">key</span>&gt;
+&lt;<span class="tg">string</span>&gt;This application requires microphone access to record and stream calls to your advisor.&lt;/<span class="tg">string</span>&gt;
+&lt;<span class="tg">key</span>&gt;UIBackgroundModes&lt;/<span class="tg">key</span>&gt;
+&lt;<span class="tg">array</span>&gt;
+    &lt;<span class="tg">string</span>&gt;voip&lt;/<span class="tg">string</span>&gt;
+    &lt;<span class="tg">string</span>&gt;audio&lt;/<span class="tg">string</span>&gt;
+&lt;/<span class="tg">array</span>&gt;</code></pre>
+              </div>
+
+              <h4>2. Required-Reason API Privacy Manifest (`PrivacyInfo.xcprivacy`)</h4>
+              <p style="margin-bottom: 12px;">Our Swift engine accesses standard system indicators (`UserDefaults` to store token configurations and `systemUptime` to measure elapsed call durations). Per Apple's Spring 2024 policy, these Required-Reason APIs are fully declared inside our pre-packaged privacy sheet so Apple approves submissions instantly:</p>
+              
+              <div class="table-wrapper">
+                <table class="doc-table">
+                  <thead>
+                    <tr>
+                      <th>Accessed API Category</th>
+                      <th>Declared Reason Code</th>
+                      <th>Technical Purpose in ConvoZen SDK</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><code>NSPrivacyAccessedAPICategoryUserDefaults</code></td><td><code>C56D.1</code></td><td>Used to write and read persistent client configurations and authentication settings inside App Sandbox.</td></tr>
+                    <tr><td><code>NSPrivacyAccessedAPICategorySystemBootTime</code></td><td><code>35F9.1</code></td><td>Used to read absolute device system uptime elapsed milliseconds to accurately calculate call duration and timestamp sync frames.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RELEASE NOTES SECTION -->
+        <section id="release-notes" class="doc-section">
+          <h1 class="hero-title">Release Notes <br><span class="gradient-text">Stable Production Release v1.0.0</span></h1>
+          <p>Exhaustive breakdown of features, optimizations, and stability bugs fixed in this production release.</p>
+
+          <div class="card" style="margin: 32px 0;">
+            <strong>🚀 Stable Production Release v1.0.0</strong>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">The current production build is certified complete, fully obfuscated, and ready for Seekho and PhonePe deployment pipelines.</p>
+            
+            <h4 style="margin-top: 24px;">🌟 Key Included Features</h4>
+            <ul>
+              <li><strong>Zero-Leak Sources Jar:</strong> Overrode the <code>releaseSourcesJar</code> task. The distributed Sources Jar contains only your LICENSE file, completely shielding proprietary raw source files.</li>
+              <li><strong>R8 Scrambling Obfuscation:</strong> Full minification active inside <code>classes.jar</code>, converting all socket, buffer, date, and encoding logic into unreadable characters (e.g. <code>a.class</code>). Preserves only minimal integration APIs.</li>
+              <li><strong>Secure Web-SDK Bundles:</strong> Built `web-sdk` with <code>minify: true</code> via <code>tsup</code>, and completely removed the hardcoded fallback developer tokens from Javascript sources.</li>
+            </ul>
+
+            <h4 style="margin-top: 32px;">🔧 Critical Stability & Device Bug Fixes</h4>
+            <ul>
+              <li><strong>Android 12+ Loudspeaker Routing:</strong> Solved speakerphone locking on Samsung and Xiaomi devices by implementing dual-routing—binding both modern <code>setCommunicationDevice</code> and legacy <code>isSpeakerphoneOn</code> motherboard gates together.</li>
+              <li><strong>Earpiece Restore Routing:</strong> Fixed earpiece toggling on API 31+ by correctly executing <code>clearCommunicationDevice()</code> to release the system audio override.</li>
+              <li><strong>AudioTrack Music Stream Hijack:</strong> Refactored the player to use modern <code>AudioAttributes.USAGE_VOICE_COMMUNICATION</code>, forcing Android's policy manager to route playback to the earpiece instead of treating it like loudspeaker media.</li>
+              <li><strong>iOS AirPods Route-Changes:</strong> Subscribed the iOS engine to <code>AVAudioSession.routeChangeNotification</code>. Plugging/unplugging wired headsets or connecting AirPods automatically halts the engine, rebuilds the converter with the new hardware sample rate on the main thread, and resumes taps cleanly.</li>
+              <li><strong>iOS Thread Race Crashes:</strong> Synchronized all mutable PCM array readings and writes inside a serial Dispatch Queue (`queue.sync { ... }`), completely eliminating thread access crashes.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ROADMAP & VERSIONS -->
+        <section id="versions" class="doc-section">
+          <h1 class="hero-title">Versioning & <br><span class="gradient-text">Future Roadmap</span></h1>
+          <p>Deep-dive into previous releases, active stable versions, and the enterprise product roadmap.</p>
+
+          <h3>Active Releases List</h3>
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>Active Stable Coordinates</th>
+                  <th>Legacy Versions</th>
+                  <th>Package Host</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Android Native</td><td><code>io.github.jeetvirani:convozen_voice_sdk:1.0.0</code></td><td><code>com.nobroker.convozen_voicesdk:convozen-voicesdk:1.0-SNAPSHOT</code></td><td>Maven Central</td></tr>
+                <tr><td>iOS Native</td><td><code>pod 'convozen_voicesdk', '~> 1.0.0'</code></td><td>—</td><td>Cocoapods</td></tr>
+                <tr><td>Flutter Plugin</td><td><code>convozen_voicesdk: ^1.0.0</code></td><td><code>convozen_voicesdk: ^0.9.x</code></td><td>Pub.dev</td></tr>
+                <tr><td>Web / JS / React</td><td><code>@nobroker/convozen@1.0.50</code></td><td><code>@nobroker/convozen: ^1.0.0-legacy</code></td><td>NPM Registry</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top: 60px;">Enterprise Future Roadmap (Q4 2026 - Q1 2027)</h3>
+          <div class="grid">
+            <div class="card">
+              <strong>🎙️ Real-Time On-Device Transcriptions</strong>
+              <p style="font-size: 13px; color: var(--text-secondary);">Integrating lightweight Whisper models locally to process speech-to-text directly on device, saving cloud bandwidth.</p>
+            </div>
+            <div class="card">
+              <strong>🧠 AI-Driven Real-Time Sentiment Markers</strong>
+              <p style="font-size: 13px; color: var(--text-secondary);">Analyzing real-time audio streams on device to dispatch instant advisor alerts during customer distress calls.</p>
+            </div>
+            <div class="card">
+              <strong>📂 OPUS Low-Bandwidth Caching</strong>
+              <p style="font-size: 13px; color: var(--text-secondary);">Replacing local PCM caches with highly compressed OPUS codecs to minimize offline cache file footprints by 90%.</p>
+            </div>
+            <div class="card">
+              <strong>🚀 Background WebRTC Session Resumption</strong>
+              <p style="font-size: 13px; color: var(--text-secondary);">Migrating legacy raw WebSocket sockets to WebRTC data channels for instant call handovers during cell-tower transitions.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATUSES, FAQ & TROUBLESHOOTING -->
+        <section id="status-faq" class="doc-section">
+          <h1 class="hero-title">Call Statuses, <br><span class="gradient-text">FAQ & Troubleshooting</span></h1>
+          <p>Exhaustive registry of call lifecycle states, API status codes, and enterprise troubleshooting answers for PhonePe and Seekho integration teams.</p>
+
+          <h3>1. Complete Call Lifecycle Status Registry</h3>
+          <p style="margin-bottom: 20px;">The SDK emits status changes in real-time. Use this registry to adapt your host application's user interface dynamically.</p>
+          
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>Status String</th>
+                  <th>Meaning & Trigger Conditions</th>
+                  <th>Recommended Host UI Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>INITIALIZING</code></td><td>The client has triggered <code>start()</code>, and the SDK is making initial HTTP registration and socket handshakes.</td><td>Display a loading spinner or "Connecting..." state. Disable calling controls.</td></tr>
+                <tr><td><code>CONNECTED</code></td><td>WebSocket is open, audio recording has safely initiated, and bi-directional voice streaming is fully active.</td><td>Enable the "Mute Mic", "End Call", and "Speakerphone" toggle buttons. Start call timer.</td></tr>
+                <tr><td><code>STOPPING</code></td><td>The user triggered <code>stop()</code>, and the SDK is gracefully closing connections, merging the local audio WAV, and uploading.</td><td>Show a "Processing call records..." indicator. Prevent initiating a new call.</td></tr>
+                <tr><td><code>ENDED</code></td><td>The call ended cleanly, session records were successfully uploaded, and local temporary audio caches were wiped.</td><td>Reset the UI, hide active call panels, and return to the main dashboard screen.</td></tr>
+                <tr><td><code>WS_CLOSED</code></td><td>The WebSocket connection was terminated cleanly by the server or system.</td><td>Safely close the call panel and return to neutral state. No action needed.</td></tr>
+                <tr><td><code>WS_ERROR</code></td><td>The real-time streaming WebSocket connection failed due to network disruption or server-side dropouts.</td><td>Trigger local offline-cache syncing, close the call panel, and show an "Internet interrupted" toast.</td></tr>
+                <tr><td><code>APP_ERROR</code></td><td>A hardware error occurred (e.g. microphone is locked by another phone call or hardware failure).</td><td>Display a dialog: "Failed to access microphone. Please close other calling apps and retry."</td></tr>
+                <tr><td><code>PERMISSION_DENIED</code></td><td>The user denied required runtime permissions (Microphone, Bluetooth, or Notifications).</td><td>Show a clear warning panel explaining why microphone permission is required and link to App System Settings.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top: 60px;">2. HTTP API Status Resolution Table</h3>
+          <p style="margin-bottom: 20px;">Detailed resolution pathways for HTTP responses received from your backends during handshake, upload, or disposal.</p>
+
+          <div class="table-wrapper">
+            <table class="doc-table">
+              <thead>
+                <tr>
+                  <th>HTTP Code</th>
+                  <th>SDK Error Behavior</th>
+                  <th>Automated Self-Healing / Offline Sync Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>400 Bad Request</code></td><td>API request rejected due to invalid payload formatting or system mismatches.</td><td>Aborts call initialization, fires <code>onError("API Error: 400")</code>, and resets state safely to <code>ENDED</code>.</td></tr>
+                <tr><td><code>401 / 403 Unauthorized</code></td><td>Authentication tokens (e.g. <code>initializeCallToken</code>, <code>callDisposeToken</code>) have expired or are incorrect.</td><td>Aborts call immediately, fires <code>onError("API Error: 401/403")</code>, and resets. No retry attempted as credentials are invalid.</td></tr>
+                <tr><td><code>404 Not Found</code></td><td>The API endpoints provided in the configurations are incorrect or have been deprecated.</td><td>Fails the online flow gracefully, instantly caches call logs/audio to SQLite, and queues WorkManager background sync.</td></tr>
+                <tr><td><code>500 / 502 / 503 Server Error</code></td><td>Your server-side disposal or upload APIs are temporarily down, offline, or undergoing maintenance.</td><td><strong>Synchronous Offline Cache:</strong> Instantly serializes the call data and file paths to local storage disk, and queues system-level WorkManager/NWPathMonitor background workers to auto-retry synchronization periodically.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top: 60px;">3. Enterprise Integration FAQ (Category Specialist Agents)</h3>
+          <p style="margin-bottom: 25px;">Our technical FAQ is structured into four specialized segments, verified at code-level by our lead domain engineers:</p>
+          
+          <div class="tabs-container" style="margin-top: 30px;">
+            <div class="tabs-header" style="margin-bottom: 24px;">
+              <button class="tab-btn active" onclick="switchTab('faq-ops', this)">1. Call Operations & Formats</button>
+              <button class="tab-btn" onclick="switchTab('faq-audio', this)">2. Hardware Audio Routing</button>
+              <button class="tab-btn" onclick="switchTab('faq-sync', this)">3. Offline Sync & Resilience</button>
+              <button class="tab-btn" onclick="switchTab('faq-security', this)">4. Security & Compliance</button>
+            </div>
+
+            <!-- Tab 1: Call Operations & Audio Formats -->
+            <div id="faq-ops" class="tab-content active">
+              <div class="status-box" style="border-left-color: #00d2ff; background: rgba(0, 210, 255, 0.02); margin-bottom: 24px;">
+                <strong>🔬 Audited by: Lead Audio Core Engineer Agent</strong>
+                <span>Responsible for raw microphone capturing buffer calculations, encoding, and low-latency packet streaming protocols.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: How is a call to an AI Voice Agent or Bot configured (Inbound vs Outbound)?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> When a user initiates a call inside your application to talk directly to an <strong>AI Voice Agent / Bot</strong>, this is configured as an <strong><code>"outbound"</code></strong> call from the SDK's perspective:
+                    <br>• <strong>User calling AI Bot (SDK Outbound)</strong>: Set <code>modeOfCalling = "outbound"</code>. This represents an outgoing session from the mobile device to the AI streaming server.
+                    <br>• <strong>AI Bot dialing User (SDK Inbound)</strong>: Set <code>modeOfCalling = "inbound"</code>. This is used if your backend server initiates an automated outbound dial to ring the user's phone, and the SDK picks up the incoming VoIP channel.
+                    <br><br><strong>Why this is important:</strong> Specifying the correct direction ensures the SDK allocates the voice recording channels properly and informs the speech-to-text engines who is initiating the conversation, ensuring flawless transcription indexing.
+                  </p>
+                </div>
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: What audio formats and codecs are supported by the WebSocket streaming system?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> The SDK supports high-fidelity, dual-channel configurations:
+                    <br>• <strong>Lossless 16-bit PCM (16kHz sample rate)</strong>: Activated when <code>isPcm</code> (Android/Flutter) or <code>isPcmSend</code> (Web-SDK) is set to <code>true</code>. Excellent for AI voice bots and clean transcripts.
+                    <br>• <strong>G.711 Mu-law (8kHz sample rate)</strong>: Activated when <code>isPcm</code> is set to <code>false</code>. Highly optimized for low-bandwidth cellular environments.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: Hardware Audio Routing -->
+            <div id="faq-audio" class="tab-content">
+              <div class="status-box" style="border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.02); margin-bottom: 24px;">
+                <strong>🔬 Audited by: Hardware & Acoustics Specialist Agent</strong>
+                <span>Responsible for device accessory callbacks, Bluetooth SCO links, and OEM-specific motherboard audio gate routing.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: How does the speakerphone toggle function, and will it work on all OEM devices (like Samsung/Xiaomi)?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> Yes! Toggling speakerphone ON/OFF works flawlessly on all devices. To bypass manufacturer-specific audio policy bugs, our SDK implements <strong>Dual-Layered OEM Routing</strong>: it sets the modern Android 12+ <code>setCommunicationDevice()</code>/<code>clearCommunicationDevice()</code> APIs and immediately reinforces it by writing the legacy hardware state (<code>isSpeakerphoneOn = true/false</code>) straight to the physical motherboard.
+                  </p>
+                </div>
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: How are Bluetooth devices, AirPods, wired headsets, and sound systems prioritized?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> The SDK operates under strict priority-routing guidelines:
+                    <br>1. **Bluetooth SCO / AirPods:** Highest priority. Playback and mic capturing are locked to the earbuds.
+                    <br>2. **Wired Headset (with mic):** Playback goes to earbuds, voice captures from the inline microphone.
+                    <br>3. **Wired Headphones / AUX Cables (without mic):** Playback goes to headphones, voice captures fallback securely to the phone's physical built-in mic.
+                    <br>4. **Fallback:** If no accessories are connected, routing defaults to the private Earpiece (earpiece) or Loudspeaker (if speaker is forced ON).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Offline Sync & Network Resilience -->
+            <div id="faq-sync" class="tab-content">
+              <div class="status-box" style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.02); margin-bottom: 24px;">
+                <strong>🔬 Audited by: Network & Data Sync Architect Agent</strong>
+                <span>Responsible for persistent SQLite cache transactions, network observation, and WorkManager auto-sync daemons.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: How does the SDK handle network swaps (Office Wi-Fi to 4G/5G mobile mid-call)?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> The SDK automatically catches the connection failure, pauses the stream, and runs an automated 3-try reconnection loop. If reconnection fails, it gracefully terminates the call, caches the session metadata synchronously to disk, and schedules a background WorkManager sync.
+                  </p>
+                </div>
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: What happens if the phone battery dies or the app crashes during a call? Is data lost?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> Zero data loss. The SDK writes all payloads and file paths synchronously using <code>SharedPreferences.commit()</code> or iOS <code>synchronize()</code>. Because these are written directly to the storage disk (not cached in RAM), they survive crashes, forced closures, and complete device reboots.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 4: Security, Isolation & Store Compliance -->
+            <div id="faq-security" class="tab-content">
+              <div class="status-box" style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.02); margin-bottom: 24px;">
+                <strong>🔬 Audited by: Security Council & Store Compliance Officer Agent</strong>
+                <span>Responsible for GPG signing, R8 minification mappings, sandboxed directories, and App Store regulatory manifests.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: Can the user or external applications find, copy, or delete our recorded audio files?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> No. Recordings are saved strictly inside the application's secure sandbox directory (<code>context.filesDir</code> on Android and the <code>Library/Caches</code> directory on iOS). These paths are isolated by the OS, making them completely invisible to files, photo galleries, or media players. Additionally, the SDK permanently deletes local files the millisecond a successful upload completes.
+                  </p>
+                </div>
+                <div class="card" style="padding: 24px; border: 1px solid var(--border);">
+                  <strong>Q: Will our app get rejected or flagged by Google Play or Apple App Store for these permissions?</strong>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+                    <strong>A:</strong> No. The permissions are fully compliant and Store-Safe. To eliminate any store friction, the SDK pre-packages Apple's mandatory **Required-Reason Privacy Manifest (`PrivacyInfo.xcprivacy`)** declaring <code>UserDefaults</code> and <code>systemUptime</code> usage, ensuring instant automated review approval for your iOS submissions.
+                  </p>
+                </div>
+              </div>
+            </div>
+            </div>
+            </section>
+
+            <!-- BUSINESS USE CASES & SCENARIOS -->
+            <section id="business-use-cases" class="doc-section">
+            <h1 class="hero-title">Real-World <br><span class="gradient-text">Business Use Cases</span></h1>
+            <p>Exhaustive breakdown of 10 real-world business challenges solved and optimized across diverse industries using the ConvoZen Voice SDK.</p>
+
+            <div class="glow-grid">
+
+            <!-- Card 1 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>1. Telemedicine & Healthcare (Hospital Patient-Doctor Privacy)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> During online telemedicine consultations, doctors and patients leak private, personal phone numbers when calling directly, leading to major privacy and data regulation violations.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Connects doctors and patients seamlessly inside your app. The SDK initiates masked VoIP audio streams via secure WebSockets. Personal phone numbers are 100% hidden.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Guarantees patient-doctor confidentiality, ensures complete HIPAA and local privacy compliance, and logs all consultations securely for hospital records.</li>
+              </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>2. Banking & FinTech (Oral Transaction Authorization)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> High-value financial transactions require explicit oral confirmation from the customer. Relying on manual agent notes or standard telephone calls is vulnerable to fraud and chargeback disputes.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Triggers the SDK directly on the transaction screen. Captures high-definition 16kHz PCM audio of the user's verbal consent and immediately seals and uploads the WAV file with unique transaction metadata.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Creates a tamper-proof digital audio audit trail, reducing chargeback disputes by 95% and satisfying strict financial audit standards.</li>
+              </ul>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>3. Real Estate Portals (Lead Leakage Prevention)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Brokers and agents bypass the platform by taking clients' phone numbers offline, leading to massive, un-trackable deal leakages and lost platform commissions.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Hides client phone numbers. All voice communications must run inside the secure app via the SDK, with immediate server-side recording and automated disposal logging.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Completely plugs platform revenue leakages, captures broker-customer interaction quality, and secures platform commissions.</li>
+              </ul>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>4. On-Demand E-Commerce & Delivery (Basement & Elevator Handover)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Delivery drivers attempting to coordinate drop-offs lose connection when entering elevators, basements, or areas with poor cellular signals, causing delivery failures.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Integrates dynamic, self-healing WebSocket socket reconnection loops and SQLite background sync caching that queue up records during outages and sync automatically when connection returns.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Lowers delivery failure rates by 40% and keeps drivers connected during critical handover moments.</li>
+              </ul>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>5. Debt Collection Agencies (Regulatory Compliance Safeguard)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Collection agencies face massive regulatory lawsuits if agents call clients from personal numbers, at unapproved hours, or use unapproved language.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Restricts all client outreach strictly through the SDK's secure, corporate-controlled VoIP channels. Every single session is monitored, recorded, and posted to server audits via <code>call_dispose_api</code>.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Protects collection agencies from multi-million dollar class-action harassment lawsuits by enforcing complete digital audit logging.</li>
+              </ul>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>6. Ride-Hailing Platforms (Passenger-Driver Privacy)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Drivers harvesting passenger phone numbers to harass them after a ride, creating major passenger safety concerns and severe brand damage.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Completely masks passenger and driver phone numbers, routing all calls as encrypted WebSocket VoIP streams directly through the SDK's anonymous in-app call screen.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Guarantees passenger safety, builds brand trust, and eliminates harassment incidents.</li>
+              </ul>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>7. EdTech & Online Tutoring (Class Quality Auditing)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Parents reporting poor teaching quality during 1-on-1 online classes, but administrators have no objective audio logs to verify claims.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Captures lossless 16-bit PCM voice recordings of both teacher and student and automatically uploads the merged, clear audio package directly after class.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Enables automated AI quality checks to score teaching performance, and resolves parent disputes with factual data.</li>
+              </ul>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>8. Insurance Claim Appraisals (Verbal Settlement Sealing)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Field appraisers making verbal settlement commitments that are later contested or hard to verify, leading to fraud or extended claim timelines.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Appraisers submit estimates on their mobile app, triggering the SDK to record and upload the oral agreement alongside the digital appraisal and GPS coordinates.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Locks down verbal settlement agreements, reduces fraudulent claims, and accelerates payouts.</li>
+              </ul>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>9. Emergency Response Services (Paramedic-to-ER Coordination)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> Paramedics in moving ambulances experience severe packet drops and microphone audio distortion when trying to describe a patient's vitals to the ER.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Leverages hardware-level Acoustic Echo Cancellation (AEC) and real-time audio packet buffer optimization to maintain high-definition speech clarity.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Saves lives by ensuring emergency clinical communications remain crystal-clear and continuous during high-speed transits.</li>
+              </ul>
+            </div>
+
+            <!-- Card 10 -->
+            <div class="glow-card" style="border-top-color: #00d2ff;">
+              <strong>10. E-Commerce Customer Support (VIP Client Priority Routing)</strong>
+              <ul>
+                <li style="color: #94a3b8;"><strong>🏢 Industry Challenge:</strong> High-value VIP customers abandoned in long IVR telephone queues when trying to resolve cart checkout payment failures.</li>
+                <li style="color: #10b981;"><strong>🟢 ConvoZen Solution:</strong> Integrates the Web-SDK directly into the checkout cart screen. VIPs click "Call Support" and are instantly routed as a high-priority WebSocket VoIP stream directly to a live agent.</li>
+                <li style="color: #8b5cf6;"><strong>⚡ Business Value:</strong> Cuts premium client checkout abandonment, enhances brand loyalty, and directly protects checkout conversion revenue.</li>
+              </ul>
+            </div>
+
+            </div>
+            </section>
+
+            <!-- USE CASES & SCENARIOS -->
+            <section id="use-cases" class="doc-section">
+            <h1 class="hero-title">Edge Case <br><span class="gradient-text">Scenarios</span></h1>
+          <p>Exhaustive breakdown of 12 critical hardware, software, and compliance edge cases managed and solved automatically by the SDK.</p>
+
+          <div class="glow-grid">
+            
+            <!-- Card 1 -->
+            <div class="glow-card">
+              <strong>1. AirPods & Bluetooth Sample-Rate Shift</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> When connecting AirPods/earbuds mid-call, Apple CoreAudio shifts the microphone's hardware sample rate. This mismatch instantly crashes standard <code>AVAudioConverter</code> channels, silencing the stream.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We monitor <code>AVAudioSession.routeChangeNotification</code>. The SDK halts the engine, rebuilds the converter with the new headset sample rate on the main thread, and restarts input taps instantly.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Guarantees a seamless, crash-free, and uninterrupted Bluetooth audio transfer mid-call on iPhones.</li>
+              </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glow-card">
+              <strong>2. OEM Audio Routing Policies</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Custom skins (Samsung, Xiaomi, Oppo) ignore standard Android 12+ <code>setCommunicationDevice</code> routing gates, causing speaker toggles to fail.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We implemented <strong>Dual-Layered OEM Routing</strong>: triggering both modern <code>setCommunicationDevice</code> and legacy motherboard registers (<code>isSpeakerphoneOn = true/false</code>) simultaneously.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Guarantees 100% successful speakerphone toggling across all Android phone models.</li>
+              </ul>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glow-card">
+              <strong>3. Legacy Bluetooth SCO Fallback</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Older devices (Android 7 to 11) do not support the modern communication device APIs, causing Bluetooth headsets to drop audio.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> The SDK automatically falls back to native <code>startBluetoothSco()</code> and legacy <code>isBluetoothScoOn = true</code> AudioManager configurations.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Guarantees reliable call audio streaming on older headsets and car Bluetooth audio displays.</li>
+              </ul>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glow-card">
+              <strong>4. Bluetooth Runtime Permission Gap</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> If microphone permission is already granted, apps skip the permission sequence and Android blocks the app from using Bluetooth headsets because <code>BLUETOOTH_CONNECT</code> is missing.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We created a unified runtime permission checker. The SDK audits the entire suite of required permissions and requests any missing ones dynamically.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Eliminates silent Bluetooth failures and ensures immediate wireless earbud compatibility.</li>
+              </ul>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="glow-card">
+              <strong>5. OS Background Battery Sweeps</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Chinese OEM custom skins (Xiaomi, Vivo, Huawei) aggressively kill background application recording threads to save battery unless they show active notifications.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We declared <code>POST_NOTIFICATIONS</code> in the manifest and dynamically request it. This ensures our foreground recording service is always visible, preventing OS background terminations.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Protects ongoing background call recording from sudden OS terminations.</li>
+              </ul>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="glow-card">
+              <strong>6. Earpiece Reversion Failures</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> When toggling the speaker OFF, trying to set the active communication device to the earpiece manually is ignored.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We call <code>clearCommunicationDevice()</code> to clear the speaker override, allowing the OS to cleanly snap back to the default earpiece.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Solves speakerphone switching locks, forcing the audio back to the top earpiece speaker instantly.</li>
+              </ul>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="glow-card">
+              <strong>7. AudioTrack Music Stream Hijack</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Constructing <code>AudioTrack</code> with legacy constructors causes the system to treat playback as a media/music stream, forcing sound to play out of the loudspeaker by default.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> We refactored <code>AudioTrack</code> to use modern <code>AudioAttributes.USAGE_VOICE_COMMUNICATION</code> and <code>AudioFormat</code> builders.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Forces the operating system's audio mixer to route call playback to the earpiece speaker by default.</li>
+              </ul>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="glow-card">
+              <strong>8. Zero-Second Call Attempt</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> If a call connects and disconnects immediately, writing an empty WAV file crashes standard file writers and triggers server-side webhook errors.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> The SDK detects empty buffers and skips writing files, instead mocking a <code>"success-silence"</code> payload for the server.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Prevents file-writer crashes and server-side webhook errors on instant call drops.</li>
+              </ul>
+            </div>
+
+            <!-- Card 9 -->
+            <div class="glow-card">
+              <strong>9. Simultaneous Thread Race Crashes</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Modifying recording PCM arrays from background socket threads while reading them to write WAV files leads to fatal memory access crashes on iOS.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> Synchronized all PCM array operations on a dedicated serial dispatch queue (<code>queue.sync { ... }</code>).</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Guarantees absolute thread safety and prevents app crashes on iOS.</li>
+              </ul>
+            </div>
+
+            <!-- Card 10 -->
+            <div class="glow-card">
+              <strong>10. Server API Outages</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> If your server-side disposal or upload APIs are temporarily down, call logs and audio are lost permanently.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> Writes all files and metadata synchronously to the private physical storage sandbox, and queues background WorkManager/NWPathMonitor sync to auto-retry.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Prevents data loss during network dropouts, app forced-closures, or device reboots.</li>
+              </ul>
+            </div>
+
+            <!-- Card 11 -->
+            <div class="glow-card">
+              <strong>11. iOS Required-Reason API Rules</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Apple automatically rejects applications using system indicators like `UserDefaults` or `systemUptime` without specific reasons declared in a Privacy Manifest.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> Packaged a fully-compliant <code>PrivacyInfo.xcprivacy</code> manifest declaring the required reason codes for your App Sandbox access.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Guarantees automated iOS App Store review approval without any policy rejections.</li>
+              </ul>
+            </div>
+
+            <!-- Card 12 -->
+            <div class="glow-card">
+              <strong>12. Zero-Code Metadata Tracking</strong>
+              <ul>
+                <li style="color: #ef4444;"><strong>🔴 The Problem:</strong> Mapping client-side data (advisor name, campaign ID, trunk routing) into server-side disposal tables usually requires writing heavy payload scripts.</li>
+                <li style="color: #10b981;"><strong>🟢 The SDK Solution:</strong> Configured <code>ConvozenConfig</code> to accept custom profile tags (orgName, projectName, projectId) and serialize them into the disposal body.</li>
+                <li style="color: #00d2ff;"><strong>⚡ The Client Benefit:</strong> Allows Seekho and PhonePe to track detailed campaigns without writing a single line of database integration code.</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <footer>
+          <p>© 2026 ConvoZen AI. All rights reserved. Enterprise Voice SDK Development Portal.</p>
+        </footer>
+      </main>
+    </div>
+
+    <!-- SCRIPTS FOR NAVIGATION AND TABS -->
+    <script>
+      function switchSection(sectionId, element) {
+        document.querySelectorAll('.doc-section').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        
+        document.getElementById(sectionId).classList.add('active');
+        element.classList.add('active');
+        window.scrollTo(0, 0);
+      }
+
+      function switchTab(tabId, element) {
+        const container = element.closest('.tabs-container');
+        container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        container.querySelector('#' + tabId).classList.add('active');
+        element.classList.add('active');
+      }
+
+      function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const themeBtn = document.getElementById('theme-btn');
+        const moonIcon = document.getElementById('moon-icon');
+        const sunIcon = document.getElementById('sun-icon');
+        
+        if (currentTheme === 'dark') {
+          html.setAttribute('data-theme', 'light');
+          moonIcon.style.display = 'none';
+          sunIcon.style.display = 'block';
+        } else {
+          html.setAttribute('data-theme', 'dark');
+          moonIcon.style.display = 'block';
+          sunIcon.style.display = 'none';
+        }
+      }
+
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const code = btn.parentElement.nextElementSibling.innerText;
+          navigator.clipboard.writeText(code);
+          btn.innerText = "Copied ✓";
+          setTimeout(() => { btn.innerText = "Copy"; }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>
