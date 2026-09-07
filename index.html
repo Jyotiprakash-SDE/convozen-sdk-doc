@@ -204,7 +204,7 @@
         </nav>
 
         <div class="sidebar-footer">
-          <span class="version-tag">v1.0.0</span>
+          <span class="version-tag">v1.0.4</span>
           <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
             <svg id="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             <svg id="sun-icon" style="display:none" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -383,7 +383,7 @@
                 <div class="code-header"><span>app/build.gradle</span><button class="copy-btn">Copy</button></div>
                 <pre><code>dependencies {
     <span class="cm">// Secure dependency from Maven Central</span>
-    <span class="fn">implementation</span>(<span class="st">"io.github.jeetvirani:convozen_voice_sdk:1.0.0"</span>)
+    <span class="fn">implementation</span>(<span class="st">"io.github.jeetvirani:convozen_voice_sdk:1.0.4"</span>)
     
     <span class="fn">implementation</span>(<span class="st">"com.squareup.okhttp3:okhttp:4.12.0"</span>)
     <span class="fn">implementation</span>(<span class="st">"androidx.work:work-runtime-ktx:2.9.0"</span>)
@@ -414,7 +414,7 @@
             campaign = <span class="st">"SALES_VOICE"</span>,
             process = <span class="st">"PROMO_BOT"</span>,
 
-            <span class="cm">// 2. API Endpoints and Headers (Pass raw tokens directly)</span>
+            <!-- <span class="cm">// 2. API Endpoints and Headers (Pass raw tokens directly)</span>
             initializeCallApi = <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
             initializeCallToken = <span class="st">"INITIALIZATION_API_TOKEN"</span>,
             recordingDisposeApi = <span class="st">"https://api.convozen.ai/v1/upload"</span>,
@@ -424,17 +424,17 @@
 
             <span class="cm">// 3. Webhook Custom Endpoints (Optional)</span>
             disposeWebhookApi = <span class="st">"https://your.company/webhook"</span>,
-            disposeWebhookToken = <span class="st">"WebhookSecureToken"</span>,
+            disposeWebhookToken = <span class="st">"WebhookSecureToken"</span>, -->
 
             <span class="cm">// 4. Custom Metadata (Optional)</span>
             requiredMetadata = <span class="fn">mapOf</span>(<span class="st">"user_id"</span> <span class="kw">to</span> <span class="st">"456"</span>, <span class="st">"lang"</span> <span class="kw">to</span> <span class="st">"en"</span>),
             optionalMetadata = <span class="fn">mapOf</span>(<span class="st">"segment"</span> <span class="kw">to</span> <span class="st">"VIP"</span>),
 
             <span class="cm">// 5. Core Audio Configuration Flags (Optional)</span>
-            isPcm = <span class="kw">true</span>,                       <span class="cm">// Lossless 16-bit PCM (Default: true)</span>
+            <!-- isPcm = <span class="kw">true</span>,                       <span class="cm">// Lossless 16-bit PCM (Default: true)</span> -->
             isDebug = <span class="kw">true</span>,                     <span class="cm">// Verbosely logs audio sizes (Default: false)</span>
             voiceChannelType = <span class="st">"PSTN"</span>,           <span class="cm">// Trunk channel routing profile (Default: "PSTN")</span>
-            isStreamUpload = <span class="kw">false</span>,              <span class="cm">// Real-time chunk uploading (Default: false)</span>
+            <!-- isStreamUpload = <span class="kw">false</span>,              <span class="cm">// Real-time chunk uploading (Default: false)</span> -->
 
             <span class="cm">// 6. Custom Client Profile Tags & Destination Details (Optional)</span>
             registerId = <span class="st">"SECURE_REGISTER_JWT_TOKEN"</span>,
@@ -444,7 +444,7 @@
             projectName = <span class="st">"Real Estate Voice"</span>,
             projectId = <span class="st">"PROJ_NB_RE_01"</span>,
             toNumber = <span class="st">"+919988776655"</span>,
-            modeOfCalling = <span class="st">"outbound"</span>
+            <!-- modeOfCalling = <span class="st">"outbound"</span> -->
         )
 
         <span class="kw">val</span> listener = <span class="kw">object</span> : <span class="cl">ConvozenListener</span> {
@@ -472,17 +472,32 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <tr>
+    <td><code>registerId</code></td>
+    <td><code>String</code></td>
+    <td><span class="badge-req">Required</span></td>
+    <td>—</td>
+    <td>The JWT registration token generated for the registered SDK client. It is used to authenticate and verify the client before initializing the SDK.</td>
+</tr>
+
+<tr>
+    <td><code>registerUrl</code></td>
+    <td><code>String</code></td>
+    <td><span class="badge-req">Required</span></td>
+    <td>—</td>
+    <td>The API endpoint used to verify the SDK client's registration token before initializing the SDK.</td>
+</tr>
                     <tr><td><code>agentId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The unique identifier representing the agent initiating the call.</td></tr>
                     <tr><td><code>fromDID</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The active phone number or trunk DID.</td></tr>
                     <tr><td><code>orgId</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Your corporate organizational ID under ConvoZen.</td></tr>
                     <tr><td><code>campaign</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The name of the campaign representing this calling session.</td></tr>
                     <tr><td><code>process</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The calling sequence process tag.</td></tr>
-                    <tr><td><code>initializeCallApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
-                    <tr><td><code>initializeCallToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authentication header token for the initial credential API.</td></tr>
-                    <tr><td><code>recordingDisposeApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
-                    <tr><td><code>recordingDisposeToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authorization header token for the recording upload API.</td></tr>
-                    <tr><td><code>callDisposeApi</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
-                    <tr><td><code>callDisposeToken</code></td><td><code>String</code></td><td><span class="badge-req">Required</span></td><td>—</td><td>Authorization header token for the dispose API.</td></tr>
+                    <tr><td><code>initializeCallApi</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>The HTTP POST endpoint for initializing VoIP calling credentials.</td></tr>
+                    <tr><td><code>initializeCallToken</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>Authentication header token for the initial credential API.</td></tr>
+                    <tr><td><code>recordingDisposeApi</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>The HTTP POST endpoint used for uploading generated WAV/PCM files.</td></tr>
+                    <tr><td><code>recordingDisposeToken</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>Authorization header token for the recording upload API.</td></tr>
+                    <tr><td><code>callDisposeApi</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>The HTTP POST endpoint for disposing session metadata records on the server.</td></tr>
+                    <tr><td><code>callDisposeToken</code></td><td><code>String</code></td><td><span class="badge-opt">Required</span></td><td>—</td><td>Authorization header token for the dispose API.</td></tr>
                     <tr><td><code>disposeWebhookApi</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>External server URL to trigger webhook hooks after the call finishes.</td></tr>
                     <tr><td><code>disposeWebhookToken</code></td><td><code>String</code></td><td><span class="badge-opt">Optional</span></td><td><code>""</code></td><td>Authorization token passed inside the header of the external webhook request.</td></tr>
                     <tr><td><code>requiredMetadata</code></td><td><code>Map&lt;String, Any&gt;</code></td><td><span class="badge-opt">Optional</span></td><td><code>emptyMap()</code></td><td>Required metadata payload mapped to the dispose transaction body.</td></tr>
@@ -1115,11 +1130,11 @@
 
         <!-- RELEASE NOTES SECTION -->
         <section id="release-notes" class="doc-section">
-          <h1 class="hero-title">Release Notes <br><span class="gradient-text">Stable Production Release v1.0.0</span></h1>
+          <h1 class="hero-title">Release Notes <br><span class="gradient-text">Stable Production Release v1.0.4</span></h1>
           <p>Exhaustive breakdown of features, optimizations, and stability bugs fixed in this production release.</p>
 
           <div class="card" style="margin: 32px 0;">
-            <strong>🚀 Stable Production Release v1.0.0</strong>
+            <strong>🚀 Stable Production Release v1.0.4</strong>
             <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">The current production build is certified complete, fully obfuscated, and ready for Seekho and PhonePe deployment pipelines.</p>
             
             <h4 style="margin-top: 24px;">🌟 Key Included Features</h4>
