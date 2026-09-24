@@ -433,7 +433,7 @@
             <span class="cm">// 5. Core Audio Configuration Flags (Optional)</span>
             <!-- isPcm = <span class="kw">true</span>,                       <span class="cm">// Lossless 16-bit PCM (Default: true)</span> -->
             isDebug = <span class="kw">true</span>,                     <span class="cm">// Verbosely logs audio sizes (Default: false)</span>
-            voiceChannelType = <span class="st">"PSTN"</span>,           <span class="cm">// Trunk channel routing profile (Default: "PSTN")</span>
+            <!-- voiceChannelType = <span class="st">"PSTN"</span>,           <span class="cm">// Trunk channel routing profile (Default: "PSTN")</span> -->
             <!-- isStreamUpload = <span class="kw">false</span>,              <span class="cm">// Real-time chunk uploading (Default: false)</span> -->
 
             <span class="cm">// 6. Custom Client Profile Tags & Destination Details (Optional)</span>
@@ -444,7 +444,7 @@
             projectName = <span class="st">"Real Estate Voice"</span>,
             projectId = <span class="st">"PROJ_NB_RE_01"</span>,
             toNumber = <span class="st">"+919988776655"</span>,
-            <!-- modeOfCalling = <span class="st">"outbound"</span> -->
+            modeOfCalling = <span class="st">"inbound"</span>
         )
 
         <span class="kw">val</span> listener = <span class="kw">object</span> : <span class="cl">ConvozenListener</span> {
@@ -855,7 +855,13 @@
     initialize_call_api: <span class="st">"https://api.convozen.ai/v1/initiate"</span>,
     initialize_call_token: <span class="st">"INITIALIZATION_API_TOKEN"</span>,
 
-    // Optional parameters (Now with correct defaults matching JS modules)
+    projectId: <span class="st">1166252</span>,
+           
+              agentName: <span class="st">Nammeueushs</span>,
+                agentId: <span class="st">u1uy2y22</span>,
+                  toNumber: <span class="st">+9172626616</span>,
+                    projectName: <span class="st">shsyye</span>,
+                      orgName: <span class="st">dhahuyaya</span>
     orgId: <span class="st">"ORG_CALLZEN_AI"</span>,
     campaign: <span class="st">"SALES_VOICE"</span>,
     process: <span class="st">"PROMO_BOT"</span>,
@@ -866,13 +872,14 @@
     dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
     dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
     metadata: { user_id: <span class="st">"456"</span>, lang: <span class="st">"en"</span> },
-    isPcmSend: <span class="kw">true</span>,                   // Note parameter is "isPcmSend", not "isPcm" in JS SDK
+    <!-- isPcmSend: <span class="kw">true</span>,                   // Note parameter is "isPcmSend", not "isPcm" in JS SDK -->
     isDebug: <span class="kw">true</span>,                     // Activates debug verbose console logging
     voiceChannelType: <span class="st">"PSTN"</span>,
-    fullLifecycle: <span class="kw">true</span>,               // Filters redundant status callbacks (Default: true)
+    fullLifecycle: <span class="kw">false</span>,   
+                // Filters redundant status callbacks (Default: true)
 
     // Modal UI forms parameters
-    isInitializeCallSessionForm: <span class="kw">true</span>,
+    isInitializeCallSessionForm: <span class="kw">false</span>, //if want from view when filed meta data
     isInitializeCallSessionFormTitle: <span class="st">"Secure Connection Setup"</span>,
     isInitializeCallSessionFormCancelLabel: <span class="st">"Dismiss"</span>,
     
@@ -919,12 +926,20 @@
         dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
         dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
         metadata: { user_id: <span class="st">"456"</span> },
-        isPcmSend: <span class="kw">true</span>,
-        isDebug: <span class="kw">true</span>
+        <!-- isPcmSend: <span class="kw">true</span>, -->
+        isDebug: <span class="kw">true</span>,
+          projectId: <span class="st">1166252</span>,
+            orgId: <span class="st">1736262</span>,
+              agentName: <span class="st">Nammeueushs</span>,
+                agentId: <span class="st">u1uy2y22</span>,
+                  toNumber: <span class="st">+9172626616</span>,
+                    projectName: <span class="st">shsyye</span>,
+                      orgName: <span class="st">dhahuyaya</span>
+                      modeOfCalling: <span class="st">inbound</span>
       }}
       optional={{
-        isDrag: <span class="kw">true</span>,
-        isToggle: <span class="kw">true</span>
+        isDrag: <span class="kw">false</span>,
+        isToggle: <span class="kw">false</span>
       }}
       style={{
         card: { borderRadius: <span class="st">"16px"</span> },
@@ -953,7 +968,14 @@
       call_dispose_token: <span class="st">"WKHwszjaUH2vP1WE"</span>,
       dispose_webhook_api: <span class="st">"https://your.company/webhook"</span>,
       dispose_webhook_token: <span class="st">"WebhookSecureToken"</span>,
-      isPcmSend: <span class="kw">true</span>,
+projectId: <span class="st">1166252</span>,
+            orgId: <span class="st">1736262</span>,
+              agentName: <span class="st">Nammeueushs</span>,
+                agentId: <span class="st">u1uy2y22</span>,
+                  toNumber: <span class="st">+9172626616</span>,
+                    projectName: <span class="st">shsyye</span>,
+                      orgName: <span class="st">dhahuyaya</span>
+                      modeOfCalling: <span class="st">inbound</span>
       isDebug: <span class="kw">true</span>
     },
     optional: {
